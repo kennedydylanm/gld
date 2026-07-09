@@ -420,8 +420,7 @@ body::before{
   </svg>
 </div>
 
-<audio id="bg-music" src="audio/theme.mp3" loop preload="none"></audio>
-<button class="sound-toggle on" type="button" aria-label="Toggle background music">
+<button class="sound-toggle on" type="button" aria-label="Toggle background ambience">
   <svg class="off-icon" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6h4l5 5V4L7 9H3z"/><line x1="16" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="16" y2="15"/></svg>
   <svg class="on-icon" viewBox="0 0 24 24" fill="none" stroke="var(--forest-deep)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16 8a5 5 0 010 8"/><path d="M18.5 5.5a9 9 0 010 13"/></svg>
 </button>
@@ -894,29 +893,77 @@ window.addEventListener('scroll', ()=>{
 }, { passive:true });
 updateMountains();
 
-/* ---------- Background music: user-provided track, on by default ---------- */
-const bgMusic = document.getElementById('bg-music');
-bgMusic.volume = 0.35;
+/* ---------- Background ambience: gentle generated pad + breeze, on by default ---------- */
+let audioCtx, masterGain, breezeSource, isPlaying = false;
+
+function startAmbience(){
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+  masterGain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 1.5);
+  masterGain.connect(audioCtx.destination);
+
+  // Soft evolving pad (F major pentatonic-ish chord)
+  [174.61, 220.00, 261.63, 349.23].forEach((freq, i)=>{
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    g.gain.value = 0.35 / (i + 1);
+    const lfo = audioCtx.createOscillator();
+    const lfoGain = audioCtx.createGain();
+    lfo.frequency.value = 0.05 + i * 0.02;
+    lfoGain.gain.value = 3;
+    lfo.connect(lfoGain).connect(osc.frequency);
+    lfo.start();
+    osc.connect(g).connect(masterGain);
+    osc.start();
+  });
+
+  // Filtered noise "breeze" texture
+  const bufferSize = 2 * audioCtx.sampleRate;
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  let lastOut = 0;
+  for(let i=0; i<bufferSize; i++){
+    const white = Math.random() * 2 - 1;
+    lastOut = (lastOut + 0.02 * white) / 1.02;
+    output[i] = lastOut * 3.5;
+  }
+  breezeSource = audioCtx.createBufferSource();
+  breezeSource.buffer = noiseBuffer;
+  breezeSource.loop = true;
+  const breezeFilter = audioCtx.createBiquadFilter();
+  breezeFilter.type = 'bandpass';
+  breezeFilter.frequency.value = 800;
+  const breezeGain = audioCtx.createGain();
+  breezeGain.gain.value = 0.5;
+  breezeSource.connect(breezeFilter).connect(breezeGain).connect(masterGain);
+  breezeSource.start();
+
+  isPlaying = true;
+}
+
+function stopAmbience(){
+  if(!audioCtx) return;
+  const now = audioCtx.currentTime;
+  masterGain.gain.linearRampToValueAtTime(0, now + 0.8);
+  setTimeout(()=>{ audioCtx.close(); audioCtx = null; }, 900);
+  isPlaying = false;
+}
 
 const soundToggle = document.querySelector('.sound-toggle');
 let wantsSound = true; // defaulted on; actual playback still needs a first user gesture (browser rule)
 
-function playMusic(){
-  bgMusic.play().catch(()=>{ /* blocked until a user gesture happens */ });
-  if(soundToggle) soundToggle.classList.add('on');
-}
-function pauseMusic(){
-  bgMusic.pause();
-  if(soundToggle) soundToggle.classList.remove('on');
-}
-
 if(soundToggle){
   soundToggle.addEventListener('click', ()=>{
-    if(!bgMusic.paused){
-      pauseMusic();
+    if(isPlaying){
+      stopAmbience();
+      soundToggle.classList.remove('on');
       wantsSound = false;
     }else{
-      playMusic();
+      startAmbience();
+      soundToggle.classList.add('on');
       wantsSound = true;
     }
   });
@@ -925,7 +972,10 @@ if(soundToggle){
 // Browsers block audio before any interaction, so start on the first
 // click/keypress/scroll instead of requiring the user to find the button.
 function autoStartOnFirstInteraction(){
-  if(wantsSound && bgMusic.paused){ playMusic(); }
+  if(wantsSound && !isPlaying){
+    startAmbience();
+    if(soundToggle) soundToggle.classList.add('on');
+  }
   window.removeEventListener('pointerdown', autoStartOnFirstInteraction);
   window.removeEventListener('keydown', autoStartOnFirstInteraction);
   window.removeEventListener('scroll', autoStartOnFirstInteraction);
