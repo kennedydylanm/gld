@@ -993,7 +993,7 @@ function tryPlay(){
     window.removeEventListener('scroll', autoStartAudio);
     window.removeEventListener('pointerdown', autoStartAudio);
     window.removeEventListener('keydown', autoStartAudio);
-  }).catch(()=>{ /* not a valid gesture yet, will retry on the next one */ });
+  }).catch((err)=>{ console.error('bg-music play() failed:', err); });
 }
 
 function stopAmbience(){
