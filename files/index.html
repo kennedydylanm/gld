@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dylan "Mike" Kennedy — GLD ePortfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,600;0,700;1,500;1,600&family=Nunito+Sans:wght@400;600;700;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   EDIT ME: search for "EDIT:" comments to find every spot
+   where you should swap in your real name/content/links.
+   ============================================================ */
+
+:root{
+  --bg:#eef3e6;
+  --bg-2:#f8f6ec;
+  --ink:#33402c;
+  --ink-soft:#5c6650;
+  --forest:#5b7d52;
+  --forest-deep:#3d5a3a;
+  --gold:#c9a961;
+  --mist:#c9d6bd;
+  --mist-2:#dfe8d3;
+  --display:'Fraunces', serif;
+  --body:'Nunito Sans', sans-serif;
+  --script:'Caveat', cursive;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--body);
+  overflow-x:hidden;
+  min-height:100vh;
+  position:relative;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:radial-gradient(rgba(93,120,80,0.05) 1px, transparent 1px);
+  background-size:14px 14px;
+  pointer-events:none;
+  z-index:1;
+}
+
+.mountains{
+  position:fixed;
+  left:0; right:0; bottom:0;
+  width:100%;
+  height:38vh;
+  z-index:0;
+  pointer-events:none;
+}
+.mountains svg{ width:100%; height:100%; display:block; }
+
+.leaf-float{
+  position:fixed;
+  z-index:2;
+  pointer-events:none;
+  opacity:0.55;
+  animation:drift 9s ease-in-out infinite;
+}
+.leaf-float.l2{ animation-duration:11s; animation-delay:1.5s; }
+.leaf-float.l3{ animation-duration:13s; animation-delay:3s; }
+@keyframes drift{
+  0%,100%{ transform:translateY(0) rotate(0deg); }
+  50%{ transform:translateY(-18px) rotate(8deg); }
+}
+
+.shell{ display:flex; min-height:100vh; position:relative; z-index:5; }
+
+.nav{
+  width:140px;
+  flex-shrink:0;
+  background:var(--bg-2);
+  border-right:1px solid var(--mist);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  padding:36px 0;
+  position:sticky;
+  top:0;
+  height:100vh;
+  z-index:20;
+}
+
+.nav-brand{
+  writing-mode:vertical-rl;
+  font-family:var(--script);
+  font-size:16px;
+  letter-spacing:0.08em;
+  color:var(--forest);
+}
+
+.nav-list{ list-style:none; display:flex; flex-direction:column; gap:38px; align-items:center; }
+
+.nav-item{
+  cursor:pointer;
+  writing-mode:vertical-rl;
+  font-family:var(--display);
+  font-style:italic;
+  font-weight:500;
+  font-size:17px;
+  letter-spacing:0.04em;
+  color:var(--ink-soft);
+  transition:color .3s ease, transform .3s ease;
+  position:relative;
+  padding:8px 0;
+  text-align:center;
+}
+.nav-item .idx{
+  display:block;
+  font-family:var(--body);
+  font-weight:700;
+  font-size:10px;
+  letter-spacing:0.15em;
+  color:var(--mist);
+  margin-bottom:10px;
+}
+.nav-item:hover{ color:var(--forest); transform:translateY(-3px); }
+.nav-item.active{ color:var(--forest-deep); }
+.nav-item.active .idx{ color:var(--gold); }
+.nav-item.active::before{
+  content:"🌿";
+  position:absolute;
+  left:50%;
+  top:-22px;
+  transform:translateX(-50%) rotate(90deg);
+  font-size:13px;
+}
+
+.nav-footer{
+  font-family:var(--body);
+  font-weight:600;
+  font-size:10px;
+  letter-spacing:0.15em;
+  color:var(--mist);
+  writing-mode:vertical-rl;
+}
+
+.main{ flex:1; position:relative; z-index:5; }
+
+.page{ display:none; min-height:100vh; padding:90px 8vw 120px; position:relative; }
+.page.active{ display:block; }
+
+.page-kicker{ font-family:var(--script); font-size:22px; color:var(--forest); margin-bottom:6px; }
+
+.page-title{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(38px, 6vw, 82px);
+  line-height:1.02;
+  color:var(--ink);
+  margin-bottom:8px;
+}
+.page-title .accent{ color:var(--forest); font-style:italic; font-weight:500; }
+
+.page-sub{ font-size:15.5px; color:var(--ink-soft); max-width:70ch; line-height:1.75; margin-bottom:10px; }
+
+.profile-photo{
+  width:132px; height:132px; border-radius:50%;
+  object-fit:cover; border:4px solid var(--bg-2);
+  box-shadow:0 0 0 2px var(--mist), 0 12px 26px rgba(61,90,58,0.18);
+  float:right; margin:-10px 0 20px 28px;
+}
+
+.figure-img{
+  margin-top:16px;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--mist);
+  box-shadow:0 8px 20px rgba(61,90,58,0.10);
+}
+.figure-img img{ width:100%; display:block; }
+.figure-caption{
+  font-size:12.5px; color:var(--ink-soft); font-style:italic;
+  padding:10px 4px 0; line-height:1.6;
+}
+
+.involvement-note{
+  margin-top:26px; display:flex; gap:18px; align-items:center;
+  background:var(--bg-2); border:1px solid var(--mist); border-radius:18px; padding:16px 20px;
+}
+.involvement-note img{ width:74px; height:74px; border-radius:12px; object-fit:cover; flex-shrink:0; }
+.involvement-note p{ font-size:13px; line-height:1.7; color:var(--ink-soft); margin:0; }
+.involvement-note strong{ color:var(--forest-deep); }
+
+@media (max-width:600px){
+  .profile-photo{ float:none; display:block; margin:0 auto 20px; }
+  .involvement-note{ flex-direction:column; text-align:center; }
+}
+
+/* ---------- ABOUT PAGE ---------- */
+.about-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; margin-top:44px; align-items:start; }
+
+.philosophy{
+  font-family:var(--display); font-style:italic; font-weight:500;
+  font-size:clamp(20px,2.1vw,26px); line-height:1.45; color:var(--forest-deep);
+  border-left:3px solid var(--mist); padding-left:22px; margin-bottom:30px;
+}
+
+.bio-text{ font-size:16px; line-height:1.85; color:var(--ink-soft); max-width:60ch; }
+
+.stat-panel{
+  background:var(--bg-2); border:1px solid var(--mist); border-radius:22px;
+  padding:34px 30px; box-shadow:0 10px 30px rgba(61,90,58,0.08); position:relative;
+}
+.stat-panel::before{
+  content:"❧"; position:absolute; top:-16px; right:22px; font-size:26px;
+  color:var(--gold); background:var(--bg); padding:2px 8px; border-radius:50%;
+}
+.stat-row{ display:flex; justify-content:space-between; align-items:baseline; padding:14px 0; border-bottom:1px dashed var(--mist); }
+.stat-row:last-child{ border-bottom:none; }
+.stat-label{ font-weight:700; font-size:12px; letter-spacing:0.06em; color:var(--ink-soft); text-transform:uppercase; }
+.stat-value{ font-family:var(--display); font-weight:600; font-size:18px; color:var(--forest-deep); text-align:right; }
+
+/* ---------- KEY INSIGHTS PAGE ---------- */
+.insight-list{ margin-top:40px; display:flex; flex-direction:column; gap:30px; }
+
+.insight-card{
+  background:var(--bg-2);
+  border:1px solid var(--mist);
+  border-radius:24px;
+  padding:34px 38px;
+  position:relative;
+  overflow:hidden;
+}
+.insight-card::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:5px;
+  background:var(--forest); transform:scaleY(0); transform-origin:top; transition:transform .35s ease;
+}
+.insight-card:hover::before{ transform:scaleY(1); }
+
+.insight-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:6px; flex-wrap:wrap; }
+.insight-num{ font-family:var(--display); font-style:italic; font-weight:600; font-size:32px; color:var(--mist); }
+.insight-title{ font-family:var(--display); font-weight:600; font-size:23px; color:var(--ink); }
+
+.tag-row{ display:flex; gap:10px; margin:12px 0 18px; flex-wrap:wrap; }
+.tag{
+  font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+  padding:5px 12px; border-radius:999px; border:1px solid var(--mist);
+}
+.tag.wtc{ background:var(--mist-2); color:var(--forest-deep); }
+.tag.btc{ background:#f3e8cf; color:#8a6d2f; border-color:#e6d3a0; }
+
+.insight-body p{ font-size:15px; line-height:1.85; color:var(--ink-soft); margin-bottom:14px; }
+.insight-body p:last-child{ margin-bottom:0; }
+.insight-body .edit{ background:#fff7e0; border-left:2px solid var(--gold); padding:2px 8px; }
+
+.artifact-box{
+  margin-top:20px; padding:16px 20px; background:var(--bg);
+  border:1px dashed var(--mist); border-radius:14px;
+}
+.artifact-box .label{ font-weight:800; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--forest); display:block; margin-bottom:8px; }
+.artifact-box ul{ margin:0; padding-left:20px; font-size:13.5px; color:var(--ink-soft); line-height:1.8; }
+
+/* ---------- LEADERSHIP PAGE ---------- */
+.lead-block{ margin-top:40px; display:flex; flex-direction:column; gap:26px; }
+.lead-card{
+  background:var(--bg-2); border:1px solid var(--mist); border-radius:22px;
+  padding:30px 34px;
+}
+.lead-card h3{ font-family:var(--display); font-weight:600; font-size:20px; color:var(--forest-deep); margin-bottom:10px; }
+.lead-card p{ font-size:14.5px; line-height:1.8; color:var(--ink-soft); }
+
+.plan-table{ margin-top:14px; width:100%; border-collapse:collapse; font-size:13.5px; }
+.plan-table th{ text-align:left; font-family:var(--body); font-weight:800; color:var(--forest-deep); padding:10px 12px; border-bottom:2px solid var(--mist); text-transform:uppercase; font-size:11px; letter-spacing:0.05em; }
+.plan-table td{ padding:12px; border-bottom:1px dashed var(--mist); color:var(--ink-soft); vertical-align:top; }
+
+/* ---------- CONTACT PAGE ---------- */
+.contact-wrap{ margin-top:46px; display:grid; grid-template-columns:1fr 1fr; gap:50px; }
+.contact-links{ display:flex; flex-direction:column; gap:2px; }
+.contact-link{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:22px 10px; border-bottom:1px dashed var(--mist);
+  text-decoration:none; color:var(--ink);
+  font-family:var(--display); font-weight:600; font-size:21px;
+  transition:color .2s ease, padding-left .2s ease;
+}
+.contact-link:hover{ color:var(--forest); padding-left:16px; }
+.contact-link .arrow{ font-family:var(--body); font-weight:700; font-size:14px; }
+.contact-note{ font-size:13.5px; line-height:2; color:var(--ink-soft); align-self:start; padding-top:8px; }
+.contact-note strong{ color:var(--forest-deep); }
+
+/* ---------- VINE TRANSITION ---------- */
+.leaf-transition{
+  position:fixed; inset:0; z-index:100; pointer-events:none; opacity:0;
+  background:linear-gradient(120deg, rgba(238,243,230,0.97), rgba(201,214,189,0.97));
+}
+.leaf-transition svg{ position:absolute; inset:0; width:100%; height:100%; }
+.leaf-transition path{ fill:none; stroke:var(--forest); stroke-width:3; stroke-linecap:round; stroke-dasharray:2000; stroke-dashoffset:2000; }
+.leaf-transition.run{ animation:fadeInOut 0.9s ease forwards; }
+.leaf-transition.run path{ animation:drawVine 0.9s ease forwards; }
+@keyframes fadeInOut{ 0%{opacity:0;} 35%{opacity:1;} 65%{opacity:1;} 100%{opacity:0;} }
+@keyframes drawVine{ 0%{stroke-dashoffset:2000;} 60%{stroke-dashoffset:0;} 100%{stroke-dashoffset:-2000;} }
+
+.page.active .anim-in{ animation:riseIn .7s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes riseIn{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
+.d1{animation-delay:.05s;} .d2{animation-delay:.14s;} .d3{animation-delay:.22s;} .d4{animation-delay:.3s;}
+
+@media (max-width:820px){
+  .shell{ flex-direction:column; }
+  .nav{ width:100%; height:auto; position:sticky; top:0; flex-direction:row; padding:16px 20px; border-right:none; border-bottom:1px solid var(--mist); }
+  .nav-brand, .nav-footer{ display:none; }
+  .nav-list{ flex-direction:row; gap:18px; flex-wrap:wrap; }
+  .nav-item{ writing-mode:horizontal-tb; font-size:14px; }
+  .nav-item .idx{ writing-mode:horizontal-tb; }
+  .nav-item.active::before{ left:-16px; top:50%; transform:translateY(-50%) rotate(0deg); }
+  .page{ padding:50px 6vw 80px; }
+  .about-grid, .contact-wrap{ grid-template-columns:1fr; }
+  .insight-card{ padding:26px 22px; }
+  .mountains{ height:22vh; }
+  .plan-table{ display:block; overflow-x:auto; }
+}
+
+:focus-visible{ outline:2px solid var(--forest); outline-offset:3px; }
+@media (prefers-reduced-motion: reduce){ *{ animation-duration:0.01ms !important; } }
+</style>
+</head>
+<body>
+
+<div class="mountains">
+  <svg viewBox="0 0 1440 400" preserveAspectRatio="none">
+    <polygon points="0,400 0,220 180,140 360,210 560,110 780,190 980,90 1180,180 1440,120 1440,400" fill="#dbe6cd" opacity="0.9"/>
+    <polygon points="0,400 0,270 220,190 420,250 640,170 860,230 1080,150 1300,220 1440,190 1440,400" fill="#aec895" opacity="0.9"/>
+    <polygon points="0,400 0,320 260,260 500,300 740,240 980,290 1220,250 1440,290 1440,400" fill="#7fa068" opacity="0.95"/>
+  </svg>
+</div>
+
+<div class="leaf-float" style="top:14%; left:6%; font-size:22px;">🍃</div>
+<div class="leaf-float l2" style="top:22%; right:10%; font-size:18px;">🍃</div>
+<div class="leaf-float l3" style="top:60%; left:12%; font-size:16px;">🌿</div>
+
+<div class="leaf-transition">
+  <svg viewBox="0 0 1440 800" preserveAspectRatio="none">
+    <path d="M -100 400 C 300 200, 500 600, 900 350 S 1400 150, 1600 400"/>
+  </svg>
+</div>
+
+<div class="shell">
+
+  <nav class="nav">
+    <div class="nav-brand">portfolio</div>
+    <ul class="nav-list">
+      <li class="nav-item active" data-page="about"><span class="idx">01</span>About Me</li>
+      <li class="nav-item" data-page="insights"><span class="idx">02</span>Key Insights</li>
+      <li class="nav-item" data-page="leadership"><span class="idx">03</span>Leadership</li>
+      <li class="nav-item" data-page="contact"><span class="idx">04</span>Contact</li>
+    </ul>
+    <div class="nav-footer">GLD · 2027</div>
+  </nav>
+
+  <main class="main">
+
+    <!-- ================= ABOUT ME ================= -->
+    <section class="page active" data-page="about">
+      <div class="page-kicker anim-in">Graduation with Leadership Distinction</div>
+      <h1 class="page-title anim-in d1">Dylan &ldquo;Mike&rdquo; Kennedy<span class="accent">.</span></h1>
+      <p class="page-sub anim-in d1">Pathway of Distinction: <strong>Professional and Civic Engagement</strong></p>
+
+      <div class="about-grid">
+        <div>
+          <img class="profile-photo anim-in d2" src="images/profile.jpg" alt="Dylan Kennedy">
+          <p class="philosophy anim-in d2">
+            <!-- EDIT: optional opening line / personal philosophy — feel free to replace -->
+            "Leadership isn't a title — it's the discipline of translating what you know into terms other people can act on."
+          </p>
+          <p class="bio-text anim-in d3">
+            <!-- EDIT: goals sentence at the end is a placeholder — confirm or rewrite in your own words -->
+            I'm a Chemical Engineering student in the Honors College at the University of South Carolina,
+            graduating with Leadership Distinction through the Professional and Civic Engagement pathway.
+            My time at Carolina has been shaped by learning to move between two worlds that don't always
+            speak the same language — the technical and the human, the classroom and the workplace, policy
+            and people. That shows up in everything from pitching a Direct Air Capture project to investors
+            one week, to translating a plant-floor chemistry fix into a $150,000 annual savings case the
+            next. This ePortfolio walks through three key insights that trace that theme: translating
+            engineering work across audiences, justifying technical decisions in financial and human terms,
+            and holding institutional authority while protecting someone else's agency. It closes with how
+            I plan to apply these lessons to a real, ongoing problem in my field. After graduation, I plan
+            to build a career in sustainable energy system design, applying the same discipline of
+            translating technical work into terms that drive real adoption.
+          </p>
+
+          <div class="involvement-note anim-in d4">
+            <img src="images/kkpsi.jpg" alt="Kappa Kappa Psi brothers">
+            <p><strong>Also worth knowing:</strong> I'm an active brother in Kappa Kappa Psi, the national
+              honorary band fraternity, where I've supported the university band program through service
+              projects and mentored new members through the pledge process. It's not one of the three
+              formal Key Insights in this portfolio, but it's shaped how I think about earning trust and
+              influence without a formal title behind it.</p>
+          </div>
+        </div>
+
+        <div class="stat-panel anim-in d3">
+          <div class="stat-row"><span class="stat-label">Pathway</span><span class="stat-value">Professional &amp; Civic Engagement</span></div>
+          <div class="stat-row"><span class="stat-label">Major</span><span class="stat-value">B.S. Chemical Engineering</span></div>
+          <div class="stat-row"><span class="stat-label">Graduation</span><span class="stat-value">May 2027</span></div>
+          <div class="stat-row"><span class="stat-label">GPA</span><span class="stat-value">3.86</span></div>
+          <div class="stat-row"><span class="stat-label">Leadership Role</span><span class="stat-value">VP, AIChE</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= KEY INSIGHTS ================= -->
+    <section class="page" data-page="insights">
+      <div class="page-kicker anim-in">What I Learned</div>
+      <h1 class="page-title anim-in d1">Key <span class="accent">Insights</span></h1>
+      <p class="page-sub anim-in d1">Three moments where a within-the-classroom (WTC) concept and a beyond-the-classroom (BTC) experience informed one another.</p>
+
+      <div class="insight-list">
+
+        <!-- KEY INSIGHT 1 -->
+        <div class="insight-card anim-in d1">
+          <div class="insight-head">
+            <span class="insight-num">01</span>
+            <span class="insight-title">Translating the Same Work Across Different Audiences</span>
+          </div>
+          <div class="tag-row">
+            <span class="tag wtc">WTC · SPCH 140 Public Communication</span>
+            <span class="tag btc">BTC · AIChE Annual Student Conference</span>
+          </div>
+          <div class="insight-body">
+            <p>In SPCH 140, I studied how effective communication depends on adapting the same underlying
+              message to fit the expectations, priorities, and vocabulary of a specific audience —
+              <span class="edit">what the course framed as [confirm your course's exact term/model, e.g. audience analysis or the rhetorical triangle]</span>.
+              At the time, this felt like a useful but somewhat abstract communication skill for structuring a speech.</p>
+            <p>That concept became concrete during the AIChE Annual Student Conference, where I represented
+              two different project teams in the same week. On the Vitamin Cube presentation team, I helped
+              research a novel chemical additive for a Solid Direct Air Capture (S-DAC) system — pyrolyzed
+              mandarin peels treated with KOH, which successfully captured 6 wt.% CO2 — then pitched the
+              business model and process scale-up strategy to a panel of industry judges acting as investors.
+              In the ChemE Car competition, I presented a technical poster explaining our car's design and
+              performance to a different panel of judges. The underlying engineering work was rigorous in
+              both cases, but the audiences needed almost opposite things from me — the investor panel
+              wanted a business case, not a derivation; the technical judges wanted rigor, not a sales pitch.</p>
+            <p>Preparing both presentations in the same week forced me to actually practice what SPCH 140 had
+              only let me theorize: the same body of knowledge has to be reframed, not just restated,
+              depending on who's evaluating it. The Vitamin Cube pitch placed 2nd internationally, which told
+              me the reframing had worked under real scrutiny.</p>
+            <p>This taught me that technical competence and persuasive communication are two separate skills
+              that most engineering coursework treats as one. Going forward, I plan to treat "who is this
+              for" as a first step in any technical communication I do professionally.</p>
+          </div>
+          <div class="artifact-box">
+            <span class="label">Artifacts</span>
+            <ul>
+              <li>WTC — graded speech/assignment from SPCH 140 demonstrating audience analysis</li>
+              <li>BTC — Vitamin Cube investor pitch deck and ChemE Car poster, captioned to show the shift in framing</li>
+            </ul>
+            <div class="figure-img">
+              <img src="images/chemecube.jpg" alt="Vitamin Cube team at the AIChE Annual Student Conference">
+            </div>
+            <p class="figure-caption">Our Vitamin Cube team after the pitch at the AIChE Annual Student Conference, ExxonMobil-sponsored ChemE Cube competition — the presentation that placed 2nd internationally.</p>
+          </div>
+        </div>
+
+        <!-- KEY INSIGHT 2 -->
+        <div class="insight-card anim-in d2">
+          <div class="insight-head">
+            <span class="insight-num">02</span>
+            <span class="insight-title">Engineering Solutions Have to Be Justified in More Than One Language</span>
+          </div>
+          <div class="tag-row">
+            <span class="tag wtc">WTC · ECHE-573 Next Energy</span>
+            <span class="tag btc">BTC · Enviva Biomass Internship</span>
+          </div>
+          <div class="insight-body">
+            <p>ECHE-573 examines the transition from a fossil-fuel-based energy economy to a sustainable one
+              not as a purely technical problem, but as one that has to be weighed simultaneously against
+              economic, political, and social factors. The course's core framework is that a technically
+              correct engineering decision isn't automatically the <em>right</em> decision — it has to hold up
+              when evaluated through multiple, often competing, lenses at once.</p>
+            <p>I encountered this directly during my internship at Enviva Biomass, where I developed and
+              scoped a chemical additive designed to eliminate Wet Electrostatic Precipitator (WESP)
+              cleaning requirements — reviewing Piping and Instrumentation Diagrams and real-time plant data,
+              and applying Root Cause Analysis to troubleshoot the problem while staying within Process
+              Safety Management standards. The technical fix itself was only half the job — making the case
+              for it required translating the chemistry into terms that mattered to the plant: the additive
+              is projected to save the company over $150,000 annually and meaningfully reduce the water and
+              labor otherwise spent on manual WESP cleaning.</p>
+            <p><span class="edit">[Tie this to a specific concept/case study from ECHE-573 once the course is underway — e.g., a case study on renewable infeasibility due to cost rather than technology.]</span>
+              My Enviva project was a small-scale version of the same reasoning the course applies at an
+              industry level: a technically sound solution still has to be argued for in financial and
+              operational terms before it becomes a real solution.</p>
+            <p>Going forward, this changes how I evaluate my own engineering work — I now build the cost and
+              environmental case alongside the technical one, because that's what actually determines
+              whether good engineering gets adopted.</p>
+          </div>
+          <div class="artifact-box">
+            <span class="label">Artifacts</span>
+            <ul>
+              <li>WTC — project or case study response from ECHE-573 <span class="edit">(pending Spring 2026 completion — confirm before submission)</span></li>
+              <li>BTC — redacted data/chart showing before-and-after results of the flush system change</li>
+            </ul>
+            <div class="figure-img">
+              <img src="images/enviva-wesp.jpg" alt="Working on the WESP unit at Enviva Biomass">
+            </div>
+            <p class="figure-caption">On site at the WESP unit at Enviva Biomass's Greenwood, SC facility, where I developed and scoped the chemical additive discussed above.</p>
+          </div>
+        </div>
+
+        <!-- KEY INSIGHT 3 -->
+        <div class="insight-card anim-in d3">
+          <div class="insight-head">
+            <span class="insight-num">03</span>
+            <span class="insight-title">Enforcing Structure While Protecting Someone Else's Story</span>
+          </div>
+          <div class="tag-row">
+            <span class="tag wtc">WTC · SCHC 354 American Autobiography</span>
+            <span class="tag btc">BTC · Resident Assistant</span>
+          </div>
+          <div class="insight-body">
+            <p>SCHC 354 examined how individuals author their own identity through life narrative, often
+              while navigating external structures they didn't choose — family expectations, cultural
+              systems, institutions. Melba Pattillo Beals's <em>Warriors Don't Cry</em> follows a teenager
+              asserting her own dignity and identity inside a segregated institutional system that was
+              actively working against her; Tara Westover's <em>Educated</em> follows someone authoring a
+              self entirely outside the narrative her family had written for her. The throughline across the
+              course was that people are not fully defined by the systems around them — they retain agency
+              in how they interpret and narrate their own experience, even inside rigid or hostile structures.</p>
+            <p>As a Resident Assistant, I occupy a version of that structure for 28 residents. I'm
+              responsible for enforcing university policy, documenting incidents, and resolving
+              conflicts — real institutional authority with real accountability. But I'm also the person
+              residents come to with academic and personal struggles, often in the same conversation
+              where I'm also holding a policy line.</p>
+            <p>SCHC 354 changed how I think about that dual role. One of the clearest examples came during an
+              on-duty emergency where a resident reported feeling unsafe because of another occupant's
+              behavior in her building, which escalated to a serious safety concern requiring immediate law
+              enforcement involvement. In the moment, I had to shift fully into an enforcement role —
+              following emergency protocol, coordinating with police, and prioritizing the safety of
+              everyone in the building. But the resident who reported it was frightened, and my job in that
+              same conversation was to make sure she didn't feel like a footnote in a police report — that
+              her experience was acknowledged as more than just the trigger for a procedure. Rather than
+              treating conflict resolution as simply "apply the rule," I started approaching it the way
+              Beals and Westover approached their own institutional conflicts: the goal isn't to erase the
+              structure, it's to help the person retain their own voice and agency within it.</p>
+            <p>This is a framework I expect to carry into any future role that involves both authority and
+              mentorship — the two aren't in conflict, but they do require deliberately protecting the
+              second while exercising the first.</p>
+          </div>
+          <div class="artifact-box">
+            <span class="label">Artifacts</span>
+            <ul>
+              <li>WTC — paper, journal entry, or reflection from SCHC 354 on identity vs. institutional structure</li>
+              <li>BTC — RA performance review or redacted incident reflection (all resident info removed)</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= LEADERSHIP ================= -->
+    <section class="page" data-page="leadership">
+      <div class="page-kicker anim-in">Applying What I've Learned</div>
+      <h1 class="page-title anim-in d1">Leadership <span class="accent">Plan</span></h1>
+      <p class="page-sub anim-in d1">How I plan to apply my key insights to a real, ongoing issue in sustainable energy system design.</p>
+
+      <div class="lead-block">
+        <div class="lead-card anim-in d1">
+          <h3>The Issue</h3>
+          <p>Wet Electrostatic Precipitator (WESP) cleaning at biomass processing plants like Enviva's
+            Greenwood facility, where I completed my internship, consumes significant water, labor, and
+            chemical resources — and until my internship project, that cost was treated as a fixed operating
+            expense rather than a solvable engineering problem. I developed and scoped a chemical additive
+            that eliminates the need for WESP cleaning entirely, projected to save the facility over
+            $150,000 annually. But that solution currently exists at a single plant. Enviva operates several
+            other facilities with comparable WESP systems, and the fix has not yet been evaluated, funded,
+            or adopted beyond Greenwood. Narrowing "sustainable biomass processing" down to this one
+            specific, already-proven process improvement is what makes this a realistic, addressable
+            initiative rather than an abstract goal.</p>
+        </div>
+
+        <div class="lead-card anim-in d2">
+          <h3>Recommendations / Solutions</h3>
+          <p>I recommend formally documenting the WESP additive as a standardized process improvement and
+            building the case needed to pilot it at a second Enviva facility. This draws directly on
+            <strong>Key Insight #2</strong>: a technically sound fix doesn't get adopted on technical merit
+            alone — it needs a financial and operational case built around it, the same translation I did
+            when I paired the chemistry with the P&ID review, real-time data, and Root Cause Analysis that
+            justified it the first time. It also draws on <strong>Key Insight #1</strong>: plant operations
+            staff and corporate sustainability stakeholders will need the same underlying case framed
+            differently — operations will care about downtime and labor, sustainability leadership will care
+            about water reduction and emissions reporting — the same audience-translation skill I practiced
+            pitching Vitamin Cube to investors versus judging panels.</p>
+          <p>I also intend to draw on my experience as <strong>Vice President of AIChE</strong>, where I
+            secured over $5,000 in funding and sponsorships for our competition teams. That role taught me
+            what it actually takes to get an organization to say yes to a resource request — building
+            relationships with the people who control budget, and presenting a clear, credible ask rather
+            than just a good idea. Scaling the WESP fix to a second plant is the same kind of ask, at a
+            larger scale.</p>
+          <div class="figure-img">
+            <img src="images/aiche-leadership.jpg" alt="AIChE executive team">
+          </div>
+          <p class="figure-caption">The AIChE executive team I helped lead as Vice President <span class="edit">[EDIT: confirm the event/conference this was taken at]</span>, whose sponsorship and fundraising work funds the competition teams behind Key Insight #1.</p>
+        </div>
+
+        <div class="lead-card anim-in d3">
+          <h3>Detailed Plan</h3>
+          <table class="plan-table">
+            <tr><th>Step</th><th>How</th><th>Why</th></tr>
+            <tr>
+              <td>1. Formalize the documentation</td>
+              <td>Write up the WESP additive project as a standardized process change, including the P&amp;ID
+                review, chemistry, and cost/water-savings data already gathered.</td>
+              <td>A one-off internship success has to become a repeatable, transferable process before
+                anyone else can adopt it.</td>
+            </tr>
+            <tr>
+              <td>2. Identify a pilot facility</td>
+              <td>Work with my Enviva supervisor to identify a second plant with a comparable WESP
+                configuration.</td>
+              <td>The fix needs to be validated somewhere other than the original site before it can be
+                trusted as a general solution.</td>
+            </tr>
+            <tr>
+              <td>3. Build two versions of the pitch</td>
+              <td>Create an operations-focused case (labor, downtime, safety) and a sustainability-focused
+                case (water use, emissions) from the same underlying data.</td>
+              <td>Different stakeholders approve budget for different reasons — Key Insight #1 in practice.</td>
+            </tr>
+            <tr>
+              <td>4. Secure pilot funding</td>
+              <td>Present the case to plant leadership, using the stakeholder-relationship and ask-framing
+                skills I built securing AIChE sponsorships.</td>
+              <td>Even a proven fix needs someone to approve the budget and time to test it elsewhere.</td>
+            </tr>
+            <tr>
+              <td>5. Implement and monitor</td>
+              <td>Work with the second plant's engineers to implement the additive and track cleaning
+                frequency, chemical cost, and water use over a defined period (e.g., 3–6 months).</td>
+              <td>Comparable, measured results are what would justify a company-wide rollout.</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="lead-card anim-in d4">
+          <h3>Evaluation</h3>
+          <p>Success would look like the second plant achieving a meaningful share of the original site's
+            savings — I'd set an initial bar of at least 70% of the original cost and water reduction, since
+            plant-specific variables (water chemistry, equipment age, throughput) may affect results. Input
+            would come from the pilot plant's engineers and operations staff, who are best positioned to
+            flag anything that doesn't transfer cleanly from the original site. The data I'd track is the
+            same data that made the first case credible: cleaning frequency, chemical cost, and water
+            consumption, compared before and after. What I hope to learn is whether this specific fix
+            generalizes across Enviva's plants — and more broadly, how to take a single successful
+            engineering improvement and turn it into an organizational standard, which is the exact skill
+            sustainable energy system design requires at scale.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CONTACT ================= -->
+    <section class="page" data-page="contact">
+      <div class="page-kicker anim-in">Get In Touch</div>
+      <h1 class="page-title anim-in d1">Let's <span class="accent">Talk</span></h1>
+
+      <div class="contact-wrap">
+        <div class="contact-links anim-in d2">
+          <a class="contact-link" href="mailto:kennedydylanm@gmail.com">Email <span class="arrow">→</span></a>
+          <a class="contact-link" href="https://linkedin.com/in/kennedydylanm" target="_blank" rel="noopener">LinkedIn <span class="arrow">→</span></a>
+          <!-- EDIT: link this to your actual resume PDF once you upload it -->
+          <a class="contact-link" href="#" target="_blank" rel="noopener">Resume (PDF) <span class="arrow">→</span></a>
+        </div>
+        <div class="contact-note anim-in d3">
+          <strong>Open to</strong><br>
+          &nbsp;&nbsp;leadership roles<br>
+          &nbsp;&nbsp;mentorship conversations<br>
+          &nbsp;&nbsp;collaboration<br><br>
+          <strong>Response time</strong><br>
+          &nbsp;&nbsp;within 48 hours
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+const navItems = document.querySelectorAll('.nav-item');
+const pages = document.querySelectorAll('.page');
+const trans = document.querySelector('.leaf-transition');
+
+function goToPage(target){
+  if(document.querySelector('.page.active').dataset.page === target) return;
+  trans.classList.add('run');
+
+  setTimeout(()=>{
+    pages.forEach(p => p.classList.toggle('active', p.dataset.page === target));
+    navItems.forEach(n => n.classList.toggle('active', n.dataset.page === target));
+    window.scrollTo({top:0, behavior:'instant'});
+  }, 420);
+
+  setTimeout(()=>{ trans.classList.remove('run'); }, 950);
+}
+
+navItems.forEach(item=>{
+  item.addEventListener('click', ()=> goToPage(item.dataset.page));
+});
+</script>
+
+</body>
+</html>
