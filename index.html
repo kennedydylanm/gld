@@ -104,6 +104,27 @@ body::before{
 .sound-toggle.on .on-icon{ display:block; }
 .sound-toggle.on{ background:var(--mist-2); }
 
+.welcome-overlay{
+  position:fixed; inset:0; z-index:200;
+  background:linear-gradient(160deg, var(--bg-1), var(--mist-2));
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+.welcome-overlay.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+.welcome-card{
+  text-align:center; padding:0 6vw;
+}
+.welcome-kicker{ font-family:var(--script); font-size:19px; color:var(--forest); margin-bottom:10px; }
+.welcome-title{ font-family:var(--display); font-weight:600; font-size:clamp(32px,5vw,52px); color:var(--ink); margin-bottom:18px; }
+.welcome-sub{ font-size:15px; color:var(--ink-soft); max-width:420px; margin:0 auto 32px; line-height:1.7; }
+.welcome-btn{
+  font-family:var(--display); font-style:italic; font-weight:600; font-size:17px;
+  background:var(--forest); color:#fff; border:none; border-radius:999px;
+  padding:14px 38px; cursor:pointer;
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.welcome-btn:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(61,90,58,0.28); }
+
 .corner-fern{
   position:fixed;
   z-index:2;
@@ -438,10 +459,20 @@ body::before{
   <svg class="scatter-leaf" style="left:97vw; width:18px; --r0:16deg; --r1:-10deg; --r2:-28deg; --sx:-12px; --d:0.22s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest-deep)"/></svg>
 </div>
 
-<button class="sound-toggle on" type="button" aria-label="Toggle background ambience">
+<audio id="bg-music" src="audio/theme.mp3" loop preload="none"></audio>
+<button class="sound-toggle on" type="button" aria-label="Toggle background music">
   <svg class="off-icon" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6h4l5 5V4L7 9H3z"/><line x1="16" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="16" y2="15"/></svg>
   <svg class="on-icon" viewBox="0 0 24 24" fill="none" stroke="var(--forest-deep)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16 8a5 5 0 010 8"/><path d="M18.5 5.5a9 9 0 010 13"/></svg>
 </button>
+
+<div class="welcome-overlay" id="welcome-overlay">
+  <div class="welcome-card">
+    <div class="welcome-kicker">Graduation with Leadership Distinction</div>
+    <h1 class="welcome-title">Welcome</h1>
+    <p class="welcome-sub">A quick note before you scroll in — this site plays a bit of soft ambient sound and a few small nature-inspired touches along the way.</p>
+    <button class="welcome-btn" id="welcome-btn" type="button">Begin</button>
+  </div>
+</div>
 
 <nav class="navbar">
   <a class="nav-brand" href="#about">portfolio</a>
@@ -876,12 +907,38 @@ const spyObserver = new IntersectionObserver((entries)=>{
 
 sections.forEach(sec => spyObserver.observe(sec));
 
-/* ---------- Nav click: quick vine flash (same regardless of scroll distance), then smooth-scroll ---------- */
+/* ---------- Nav click: quick vine flash + a playful blip, then smooth-scroll ---------- */
+let blipCtx;
+const blipNotes = [523.25, 587.33, 659.25, 783.99, 880.00]; // C D E G A (pentatonic)
+let blipIndex = 0;
+function playBlip(){
+  try{
+    blipCtx = blipCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if(blipCtx.state === 'suspended'){ blipCtx.resume(); }
+    const now = blipCtx.currentTime;
+    const freq = blipNotes[blipIndex % blipNotes.length];
+    blipIndex++;
+
+    const osc = blipCtx.createOscillator();
+    const gain = blipCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(freq, now);
+    osc.frequency.setValueAtTime(freq * 1.4, now + 0.06);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.09, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+    osc.connect(gain).connect(blipCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.16);
+  }catch(e){ /* audio unsupported, fail quietly */ }
+}
+
 navItems.forEach(item=>{
   item.addEventListener('click', (e)=>{
     e.preventDefault();
     const target = document.getElementById(item.dataset.target);
     if(!target) return;
+    playBlip();
     vine.classList.add('run');
     target.scrollIntoView({ behavior:'smooth', block:'start' });
     setTimeout(()=>{ vine.classList.remove('run'); }, 870);
@@ -920,77 +977,28 @@ window.addEventListener('scroll', ()=>{
 }, { passive:true });
 onScrollFrame();
 
-/* ---------- Background ambience: gentle generated pad + breeze, starts on first scroll ---------- */
-let audioCtx, masterGain, breezeSource, isPlaying = false, built = false;
+/* ---------- Background music: your uploaded track, starts on first scroll/click/key ---------- */
+let isPlaying = false;
+const bgMusic = document.getElementById('bg-music');
+if(bgMusic) bgMusic.volume = 0.35;
 
-function buildAmbience(){
-  if(built) return;
-  built = true;
-  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = audioCtx.createGain();
-  masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-  masterGain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 1.5);
-  masterGain.connect(audioCtx.destination);
-
-  // Soft evolving pad (F major pentatonic-ish chord)
-  [174.61, 220.00, 261.63, 349.23].forEach((freq, i)=>{
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = freq;
-    g.gain.value = 0.35 / (i + 1);
-    const lfo = audioCtx.createOscillator();
-    const lfoGain = audioCtx.createGain();
-    lfo.frequency.value = 0.05 + i * 0.02;
-    lfoGain.gain.value = 3;
-    lfo.connect(lfoGain).connect(osc.frequency);
-    lfo.start();
-    osc.connect(g).connect(masterGain);
-    osc.start();
-  });
-
-  // Filtered noise "breeze" texture
-  const bufferSize = 2 * audioCtx.sampleRate;
-  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const output = noiseBuffer.getChannelData(0);
-  let lastOut = 0;
-  for(let i=0; i<bufferSize; i++){
-    const white = Math.random() * 2 - 1;
-    lastOut = (lastOut + 0.02 * white) / 1.02;
-    output[i] = lastOut * 3.5;
-  }
-  breezeSource = audioCtx.createBufferSource();
-  breezeSource.buffer = noiseBuffer;
-  breezeSource.loop = true;
-  const breezeFilter = audioCtx.createBiquadFilter();
-  breezeFilter.type = 'bandpass';
-  breezeFilter.frequency.value = 800;
-  const breezeGain = audioCtx.createGain();
-  breezeGain.gain.value = 0.5;
-  breezeSource.connect(breezeFilter).connect(breezeGain).connect(masterGain);
-  breezeSource.start();
-}
-
-// Builds the graph once, then tries to resume it. Only treated as
-// "playing" once the context genuinely reports 'running' — a resume
-// attempt from a non-qualifying event (like scroll) can silently stay
-// suspended, and we don't want that to look like success.
+// Only treated as "playing" once playback genuinely starts — a play()
+// attempt from a non-qualifying event (like scroll) can silently reject,
+// and we don't want that to look like success.
 function tryPlay(){
-  buildAmbience();
-  audioCtx.resume().then(()=>{
-    if(audioCtx.state === 'running'){
-      isPlaying = true;
-      if(soundToggle) soundToggle.classList.add('on');
-      window.removeEventListener('scroll', autoStartAudio);
-      window.removeEventListener('pointerdown', autoStartAudio);
-      window.removeEventListener('keydown', autoStartAudio);
-    }
+  if(!bgMusic || isPlaying) return;
+  bgMusic.play().then(()=>{
+    isPlaying = true;
+    if(soundToggle) soundToggle.classList.add('on');
+    window.removeEventListener('scroll', autoStartAudio);
+    window.removeEventListener('pointerdown', autoStartAudio);
+    window.removeEventListener('keydown', autoStartAudio);
   }).catch(()=>{ /* not a valid gesture yet, will retry on the next one */ });
 }
 
 function stopAmbience(){
-  if(!audioCtx) return;
-  audioCtx.suspend();
+  if(!bgMusic) return;
+  bgMusic.pause();
   isPlaying = false;
 }
 
@@ -1021,6 +1029,18 @@ function autoStartAudio(){
 window.addEventListener('scroll', autoStartAudio, { passive:true });
 window.addEventListener('pointerdown', autoStartAudio);
 window.addEventListener('keydown', autoStartAudio);
+
+/* ---------- Welcome screen: doubles as the required user gesture to unlock audio ---------- */
+document.body.style.overflow = 'hidden';
+const welcomeOverlay = document.getElementById('welcome-overlay');
+const welcomeBtn = document.getElementById('welcome-btn');
+if(welcomeBtn){
+  welcomeBtn.addEventListener('click', ()=>{
+    document.body.style.overflow = '';
+    if(welcomeOverlay) welcomeOverlay.classList.add('hide');
+    if(wantsSound) tryPlay();
+  });
+}
 </script>
 
 
