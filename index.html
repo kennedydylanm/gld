@@ -921,11 +921,12 @@ window.addEventListener('scroll', ()=>{
 onScrollFrame();
 
 /* ---------- Background ambience: gentle generated pad + breeze, starts on first scroll ---------- */
-let audioCtx, masterGain, breezeSource, isPlaying = false;
+let audioCtx, masterGain, breezeSource, isPlaying = false, built = false;
 
-function startAmbience(){
+function buildAmbience(){
+  if(built) return;
+  built = true;
   audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-  if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
   masterGain = audioCtx.createGain();
   masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
   masterGain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 1.5);
@@ -968,15 +969,28 @@ function startAmbience(){
   breezeGain.gain.value = 0.5;
   breezeSource.connect(breezeFilter).connect(breezeGain).connect(masterGain);
   breezeSource.start();
+}
 
-  isPlaying = true;
+// Builds the graph once, then tries to resume it. Only treated as
+// "playing" once the context genuinely reports 'running' — a resume
+// attempt from a non-qualifying event (like scroll) can silently stay
+// suspended, and we don't want that to look like success.
+function tryPlay(){
+  buildAmbience();
+  audioCtx.resume().then(()=>{
+    if(audioCtx.state === 'running'){
+      isPlaying = true;
+      if(soundToggle) soundToggle.classList.add('on');
+      window.removeEventListener('scroll', autoStartAudio);
+      window.removeEventListener('pointerdown', autoStartAudio);
+      window.removeEventListener('keydown', autoStartAudio);
+    }
+  }).catch(()=>{ /* not a valid gesture yet, will retry on the next one */ });
 }
 
 function stopAmbience(){
   if(!audioCtx) return;
-  const now = audioCtx.currentTime;
-  masterGain.gain.linearRampToValueAtTime(0, now + 0.8);
-  setTimeout(()=>{ audioCtx.close(); audioCtx = null; }, 900);
+  audioCtx.suspend();
   isPlaying = false;
 }
 
@@ -990,9 +1004,8 @@ if(soundToggle){
       soundToggle.classList.remove('on');
       wantsSound = false;
     }else{
-      startAmbience();
-      soundToggle.classList.add('on');
       wantsSound = true;
+      tryPlay();
     }
   });
 }
@@ -1000,19 +1013,14 @@ if(soundToggle){
 // Browsers only unlock audio on a click, keypress, or tap — scrolling alone
 // is explicitly excluded from that list in Chrome/Firefox/Safari. We still
 // treat scroll as the primary trigger (matches the intended "start as you
-// scroll" feel), but fall back to the first click/key so it reliably starts.
+// scroll" feel), but keep listening on click/key too since a scroll-triggered
+// resume can silently fail — it'll just try again on the next qualifying event.
 function autoStartAudio(){
-  if(wantsSound && !isPlaying){
-    startAmbience();
-    if(soundToggle) soundToggle.classList.add('on');
-  }
-  window.removeEventListener('scroll', autoStartAudio);
-  window.removeEventListener('pointerdown', autoStartAudio);
-  window.removeEventListener('keydown', autoStartAudio);
+  if(wantsSound && !isPlaying){ tryPlay(); }
 }
-window.addEventListener('scroll', autoStartAudio, { once:true, passive:true });
-window.addEventListener('pointerdown', autoStartAudio, { once:true });
-window.addEventListener('keydown', autoStartAudio, { once:true });
+window.addEventListener('scroll', autoStartAudio, { passive:true });
+window.addEventListener('pointerdown', autoStartAudio);
+window.addEventListener('keydown', autoStartAudio);
 </script>
 
 
