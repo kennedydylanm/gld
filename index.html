@@ -4,10 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dylan "Mike" Kennedy — GLD ePortfolio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,600;0,700;1,500;1,600&family=Nunito+Sans:wght@400;600;700;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/bokutoh-eb.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* Rodin Bokutoh Pro EB, subset to the Latin glyphs this page uses.
+   The weight range keeps browsers from faking a bolder cut — the face
+   is already Extra Bold, and synthetic bold on it turns to mud. */
+@font-face{
+  font-family:'Bokutoh';
+  src:url('fonts/bokutoh-eb.woff2') format('woff2'),
+      url('fonts/bokutoh-eb.woff') format('woff');
+  font-weight:100 900;
+  font-style:normal;
+  font-display:swap;
+}
 /* ============================================================
    EDIT ME: search for "EDIT:" comments to find every spot
    where you should swap in your real name/content/links.
@@ -15,26 +24,33 @@
 
 :root{
   --bg:#eef3e6;
-  --bg-2:#f8f6ec;
-  --ink:#33402c;
-  --ink-soft:#5c6650;
+  --bg-2:#fffae4;      /* dialogue paper */
+  --paper:#fffae4;
+  --ink:#74664b;       /* dialogue text */
+  --ink-soft:#8f8168;  /* same hue, lifted for secondary copy */
+  --tag:#e86e88;       /* speaker name tag */
+  --tag-deep:#d15676;
+  --blob:64px 74px 68px 70px / 46px 42px 50px 44px;
   --forest:#5b7d52;
   --forest-deep:#3d5a3a;
   --gold:#c9a961;
   --mist:#c9d6bd;
   --mist-2:#dfe8d3;
-  --display:'Fraunces', serif;
-  --body:'Nunito Sans', sans-serif;
-  --script:'Caveat', cursive;
+  --creme:#f7efdf;
+  --display:'Bokutoh', 'Nunito Sans', system-ui, sans-serif;
+  --body:'Bokutoh', 'Nunito Sans', system-ui, sans-serif;
+  --script:'Bokutoh', 'Nunito Sans', system-ui, sans-serif;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+html{scroll-behavior:auto;} /* JS drives the eased section slide */
 
 body{
   background:var(--bg);
   color:var(--ink);
   font-family:var(--body);
+  letter-spacing:0.012em;
+  -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
   min-height:100vh;
   position:relative;
@@ -106,24 +122,74 @@ body::before{
 
 .welcome-overlay{
   position:fixed; inset:0; z-index:200;
-  background:linear-gradient(160deg, var(--bg), var(--mist-2));
+  background:var(--creme);
   display:flex; align-items:center; justify-content:center;
-  transition:opacity .6s ease, visibility .6s ease;
+  transition:opacity .5s ease, visibility .5s ease;
 }
 .welcome-overlay.hide{ opacity:0; visibility:hidden; pointer-events:none; }
-.welcome-card{
-  text-align:center; padding:0 6vw;
+
+.welcome-inner{
+  display:flex; flex-direction:column; align-items:center;
+  opacity:0; transform:translateY(78px);
+  animation:signRise 1.05s cubic-bezier(.16,.84,.34,1) .18s forwards;
 }
-.welcome-kicker{ font-family:var(--script); font-size:19px; color:var(--forest); margin-bottom:10px; }
-.welcome-title{ font-family:var(--display); font-weight:600; font-size:clamp(32px,5vw,52px); color:var(--ink); margin-bottom:18px; }
-.welcome-sub{ font-size:15px; color:var(--ink-soft); max-width:420px; margin:0 auto 32px; line-height:1.7; }
-.welcome-btn{
-  font-family:var(--display); font-style:italic; font-weight:600; font-size:17px;
-  background:var(--forest); color:#fff; border:none; border-radius:999px;
-  padding:14px 38px; cursor:pointer;
-  transition:transform .25s ease, box-shadow .25s ease;
+@keyframes signRise{ to{ opacity:1; transform:translateY(0); } }
+
+.sign-wrap{
+  transform-origin:top center;
+  animation:signSway 4.6s ease-in-out 1.3s infinite;
 }
-.welcome-btn:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(61,90,58,0.28); }
+.sign-wrap.clicked{ animation:signBounce .5s ease forwards; }
+@keyframes signSway{
+  0%,100%{ transform:rotate(-1.3deg); }
+  50%{ transform:rotate(1.3deg); }
+}
+@keyframes signBounce{
+  0%{ transform:rotate(1.3deg) scale(1); }
+  35%{ transform:rotate(-4deg) scale(1.035); }
+  70%{ transform:rotate(2.5deg) scale(0.995); }
+  100%{ transform:rotate(0deg) scale(1.01); }
+}
+
+.sign-btn{
+  border:none; background:none; padding:0; margin:0; display:block;
+  cursor:pointer; border-radius:14px;
+}
+.sign-btn img{
+  display:block; width:min(88vw,520px); height:auto;
+  filter:drop-shadow(0 18px 26px rgba(61,90,58,0.28));
+  transition:transform .25s ease, filter .25s ease;
+}
+.sign-btn:hover img{
+  transform:translateY(-4px) scale(1.015);
+  filter:drop-shadow(0 24px 34px rgba(61,90,58,0.34));
+}
+.sign-btn:focus-visible{ outline:3px solid var(--forest); outline-offset:10px; }
+
+.welcome-kicker{
+  margin-top:26px;
+  font-family:var(--body); font-weight:700; font-size:11px;
+  letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--ink-soft); opacity:0.6;
+}
+
+/* ---------- IRIS WIPE: black closes in on the sign, then opens on the page ---------- */
+.iris{
+  position:fixed; top:50%; left:50%;
+  width:0; height:0; border-radius:50%;
+  /* The ring is what you actually see. Its spread stays constant, so the
+     hole can shrink to nothing and still leave a fully black screen —
+     scaling the element instead would shrink the ring away with it. */
+  box-shadow:0 0 0 100vmax #000;
+  transform:translate(-50%,-50%);
+  z-index:400; display:none; pointer-events:none;
+  will-change:width,height;
+}
+.iris.active{ display:block; pointer-events:auto; }
+.iris.animate{
+  transition:width var(--iris-dur,780ms) cubic-bezier(.65,0,.35,1),
+             height var(--iris-dur,780ms) cubic-bezier(.65,0,.35,1);
+}
 
 .corner-fern{
   position:fixed;
@@ -134,33 +200,6 @@ body::before{
 .corner-fern.top-right{ top:80px; right:8px; width:90px; height:150px; transform:scaleY(-1) translateY(var(--py, 0px)); }
 .corner-fern.bottom-left{ bottom:0; left:0; width:100px; height:170px; transform:translateY(var(--py, 0px)); }
 @media (max-width:820px){ .corner-fern{ display:none; } }
-
-/* ---------- FALLING LEAVES TRANSITION (plays only on navbar-click jumps) ---------- */
-.vine-transition{
-  position:fixed; inset:0; z-index:90; pointer-events:none; opacity:0;
-  background:linear-gradient(120deg, rgba(238,243,230,0.85), rgba(201,214,189,0.85));
-  overflow:hidden;
-}
-.vine-transition.run{ animation:vineFade 0.85s ease forwards; }
-@keyframes vineFade{ 0%{opacity:0;} 18%{opacity:1;} 78%{opacity:1;} 100%{opacity:0;} }
-
-.vine-transition .scatter-leaf{
-  position:absolute;
-  top:0;
-  opacity:0;
-  transform:translateY(-14vh) translateX(0) rotate(var(--r0, 0deg)) scale(0.8);
-}
-.vine-transition.run .scatter-leaf{
-  animation:leafFall 0.85s cubic-bezier(.3,0,.6,1) forwards;
-  animation-delay:var(--d, 0s);
-}
-@keyframes leafFall{
-  0%{ opacity:0; transform:translateY(-14vh) translateX(0) rotate(var(--r0, 0deg)) scale(0.8); }
-  14%{ opacity:1; }
-  50%{ transform:translateY(46vh) translateX(var(--sx, 14px)) rotate(var(--r1, 15deg)) scale(1); }
-  82%{ opacity:1; }
-  100%{ opacity:0; transform:translateY(108vh) translateX(0) rotate(var(--r2, 40deg)) scale(0.9); }
-}
 
 .navbar{
   position:sticky;
@@ -189,10 +228,10 @@ body::before{
 .nav-item{
   cursor:pointer;
   font-family:var(--display);
-  font-style:italic;
+  font-style:normal;
   font-weight:500;
-  font-size:15px;
-  letter-spacing:0.02em;
+  font-size:13.5px;
+  letter-spacing:0.03em;
   color:var(--ink-soft);
   text-decoration:none;
   transition:color .3s ease;
@@ -230,19 +269,19 @@ body::before{
 .page{ padding:100px 8vw 90px; position:relative; scroll-margin-top:68px; border-bottom:1px dashed var(--mist); }
 .page:last-of-type{ border-bottom:none; }
 
-.page-kicker{ font-family:var(--script); font-size:22px; color:var(--forest); margin-bottom:6px; }
+.page-kicker{ font-family:var(--script); font-size:14px; letter-spacing:0.16em; text-transform:uppercase; color:var(--forest); margin-bottom:10px; }
 
 .page-title{
   font-family:var(--display);
   font-weight:600;
-  font-size:clamp(38px, 6vw, 82px);
-  line-height:1.02;
+  font-size:clamp(34px, 5.2vw, 70px);
+  line-height:1.12;
   color:var(--ink);
   margin-bottom:8px;
 }
-.page-title .accent{ color:var(--forest); font-style:italic; font-weight:500; }
+.page-title .accent{ color:var(--forest); font-style:normal; font-weight:500; }
 
-.page-sub{ font-size:15.5px; color:var(--ink-soft); max-width:70ch; line-height:1.75; margin-bottom:10px; }
+.page-sub{ font-size:15px; color:var(--ink-soft); max-width:66ch; line-height:1.9; margin-bottom:10px; }
 
 .profile-photo{
   width:132px; height:132px; border-radius:50%;
@@ -260,7 +299,7 @@ body::before{
 }
 .figure-img img{ width:100%; display:block; }
 .figure-caption{
-  font-size:12.5px; color:var(--ink-soft); font-style:italic;
+  font-size:12.5px; color:var(--ink-soft); font-style:normal;
   padding:10px 4px 0; line-height:1.6;
 }
 
@@ -281,64 +320,87 @@ body::before{
 .about-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; margin-top:44px; align-items:start; }
 
 .philosophy{
-  font-family:var(--display); font-style:italic; font-weight:500;
+  font-family:var(--display); font-style:normal; font-weight:500;
   font-size:clamp(20px,2.1vw,26px); line-height:1.45; color:var(--forest-deep);
-  border-left:3px solid var(--mist); padding-left:22px; margin-bottom:30px;
+  border-left:4px solid rgba(116,102,75,0.22); padding-left:22px; margin-bottom:30px;
 }
 
 .bio-text{ font-size:16px; line-height:1.85; color:var(--ink-soft); max-width:60ch; }
 
 .stat-panel{
-  background:var(--bg-2); border:1px solid var(--mist); border-radius:22px;
-  padding:34px 30px; box-shadow:0 10px 30px rgba(61,90,58,0.08); position:relative;
+  border-radius:70px 60px 68px 64px / 46px 50px 44px 48px;
+  padding:52px 34px 30px;
 }
-.stat-panel::before{
-  content:"❧"; position:absolute; top:-16px; right:22px; font-size:26px;
-  color:var(--gold); background:var(--bg); padding:2px 8px; border-radius:50%;
-}
-.stat-row{ display:flex; justify-content:space-between; align-items:baseline; padding:14px 0; border-bottom:1px dashed var(--mist); }
+.stat-panel::before{ content:"Profile"; font-size:14px; }
+.stat-row{ display:flex; justify-content:space-between; align-items:baseline; padding:14px 0; border-bottom:1px dashed rgba(116,102,75,0.28); }
 .stat-row:last-child{ border-bottom:none; }
+.stat-value{ text-align:right; }
 .stat-label{ font-weight:700; font-size:12px; letter-spacing:0.06em; color:var(--ink-soft); text-transform:uppercase; }
 .stat-value{ font-family:var(--display); font-weight:600; font-size:18px; color:var(--forest-deep); text-align:right; }
 
 /* ---------- KEY INSIGHTS PAGE ---------- */
 .insight-list{ margin-top:40px; display:flex; flex-direction:column; gap:30px; }
 
-.insight-card{
-  background:var(--bg-2);
-  border:1px solid var(--mist);
-  border-radius:24px;
-  padding:34px 38px;
+/* ============================================================
+   DIALOGUE BOXES
+   Soft cream blobs with a speaker tag clipped to the top-left,
+   after the Animal Crossing dialogue window. The corner radii are
+   deliberately unequal so the shape reads hand-drawn rather than
+   like a rounded rectangle.
+   ============================================================ */
+.insight-card, .lead-card, .project-card, .stat-panel{
+  background:var(--paper);
+  border:none;
+  box-shadow:0 14px 30px rgba(61,90,58,0.13);
   position:relative;
-  overflow:hidden;
+  overflow:visible;
   transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease;
 }
-.insight-card:hover{ transform:translateY(-6px); box-shadow:0 18px 34px rgba(61,90,58,0.14); }
-.insight-card::before{
-  content:""; position:absolute; left:0; top:0; bottom:0; width:5px;
-  background:var(--forest); transform:scaleY(0); transform-origin:top; transition:transform .35s ease;
+.insight-card:hover, .lead-card:hover, .project-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 22px 42px rgba(61,90,58,0.18);
 }
-.insight-card:hover::before{ transform:scaleY(1); }
 
-.insight-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:6px; flex-wrap:wrap; }
-.insight-num{ font-family:var(--display); font-style:italic; font-weight:600; font-size:32px; color:var(--mist); }
-.insight-title{ font-family:var(--display); font-weight:600; font-size:23px; color:var(--ink); }
+/* the speaker tag: each card's own label, lifted out of the flow */
+.insight-num,
+.project-year,
+.lead-card h3,
+.stat-panel::before{
+  position:absolute; top:-16px; left:30px; z-index:2;
+  transform:rotate(-4.5deg);
+  background:var(--tag); color:var(--paper);
+  font-family:var(--body); font-weight:400; font-style:normal;
+  letter-spacing:0.03em; white-space:nowrap;
+  padding:8px 20px 9px; border-radius:999px;
+  box-shadow:0 4px 0 var(--tag-deep), 0 9px 16px rgba(61,90,58,0.20);
+}
+
+.insight-card{
+  border-radius:66px 76px 70px 72px / 48px 44px 52px 46px;
+  padding:52px 44px 36px;
+}
+
+.insight-head{ margin-bottom:6px; }
+.insight-num{ font-size:14px; }
+.insight-num::before{ content:"Insight "; }
+.insight-title{ font-family:var(--display); font-size:23px; color:var(--ink); line-height:1.4; }
 
 .tag-row{ display:flex; gap:10px; margin:12px 0 18px; flex-wrap:wrap; }
 .tag{
-  font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
-  padding:5px 12px; border-radius:999px; border:1px solid var(--mist);
+  font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
+  padding:6px 14px; border-radius:999px; border:2px solid transparent;
 }
-.tag.wtc{ background:var(--mist-2); color:var(--forest-deep); }
-.tag.btc{ background:#f3e8cf; color:#8a6d2f; border-color:#e6d3a0; }
+.tag.wtc{ background:#e7eddb; color:#6b7a55; border-color:#d3ddc0; }
+.tag.btc{ background:#f6e9cd; color:#a08243; border-color:#e8d5a6; }
 
-.insight-body p{ font-size:15px; line-height:1.85; color:var(--ink-soft); margin-bottom:14px; }
+.insight-body p{ font-size:14.5px; line-height:1.95; color:var(--ink-soft); margin-bottom:14px; }
 .insight-body p:last-child{ margin-bottom:0; }
 .insight-body .edit{ background:#fff7e0; border-left:2px solid var(--gold); padding:2px 8px; }
 
 .artifact-box{
-  margin-top:20px; padding:16px 20px; background:var(--bg);
-  border:1px dashed var(--mist); border-radius:14px;
+  margin-top:20px; padding:16px 22px; background:#fdf3d8;
+  border:2px dashed rgba(116,102,75,0.25);
+  border-radius:26px 32px 28px 30px / 20px 18px 22px 19px;
 }
 .artifact-box .label{ font-weight:800; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--forest); display:block; margin-bottom:8px; }
 .artifact-box ul{ margin:0; padding-left:20px; font-size:13.5px; color:var(--ink-soft); line-height:1.8; }
@@ -346,13 +408,11 @@ body::before{
 /* ---------- LEADERSHIP PAGE ---------- */
 .lead-block{ margin-top:40px; display:flex; flex-direction:column; gap:26px; }
 .lead-card{
-  background:var(--bg-2); border:1px solid var(--mist); border-radius:22px;
-  padding:30px 34px;
-  transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease;
+  border-radius:72px 62px 74px 66px / 44px 50px 46px 48px;
+  padding:50px 36px 32px;
 }
-.lead-card:hover{ transform:translateY(-6px); box-shadow:0 18px 34px rgba(61,90,58,0.14); }
-.lead-card h3{ font-family:var(--display); font-weight:600; font-size:20px; color:var(--forest-deep); margin-bottom:10px; }
-.lead-card p{ font-size:14.5px; line-height:1.8; color:var(--ink-soft); }
+.lead-card h3{ font-size:14px; margin-bottom:0; }
+.lead-card p{ font-size:14.5px; line-height:1.9; color:var(--ink-soft); }
 
 .plan-table{ margin-top:14px; width:100%; border-collapse:collapse; font-size:13.5px; }
 .plan-table th{ text-align:left; font-family:var(--body); font-weight:800; color:var(--forest-deep); padding:10px 12px; border-bottom:2px solid var(--mist); text-transform:uppercase; font-size:11px; letter-spacing:0.05em; }
@@ -361,12 +421,11 @@ body::before{
 /* ---------- PROJECTS PAGE ---------- */
 .project-grid{ margin-top:40px; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:26px; }
 .project-card{
-  background:var(--bg-2); border:1px solid var(--mist); border-radius:22px;
-  padding:28px 30px; display:flex; flex-direction:column;
-  transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease;
+  border-radius:60px 70px 64px 74px / 46px 42px 48px 44px;
+  padding:50px 34px 30px; display:flex; flex-direction:column;
 }
 .project-card:hover{ transform:translateY(-6px); box-shadow:0 18px 34px rgba(61,90,58,0.14); }
-.project-year{ font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--forest); }
+.project-year{ font-size:12px; }
 .project-title{ font-family:var(--display); font-weight:600; font-size:19px; color:var(--ink); margin:6px 0 10px; }
 .project-desc{ font-size:14px; line-height:1.75; color:var(--ink-soft); margin-bottom:14px; }
 .project-card .figure-img{ margin-top:auto; }
@@ -391,6 +450,14 @@ body::before{
 @media (max-width:820px){
   .page{ padding:50px 6vw 70px; }
   .about-grid, .contact-wrap{ grid-template-columns:1fr; }
+  .insight-card, .lead-card, .project-card, .stat-panel{
+    border-radius:38px 44px 40px 42px / 30px 27px 32px 29px;
+    padding-left:24px; padding-right:24px;
+  }
+  .insight-num, .project-year, .lead-card h3, .stat-panel::before{
+    left:20px; font-size:12.5px; padding:7px 15px 8px;
+  }
+  .project-year{ white-space:normal; max-width:calc(100% - 46px); }
   .insight-card{ padding:26px 22px; }
   .mountains{ height:22vh; }
   .plan-table{ display:block; overflow-x:auto; }
@@ -440,25 +507,6 @@ body::before{
   <div class="bird b3"><div class="bird-glide"><svg viewBox="0 0 26 16"><path d="M1 9C5 3 9 3 13 8C17 3 21 3 25 9" fill="none" stroke="var(--forest-deep)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
 </div>
 
-<div class="vine-transition">
-  <svg class="scatter-leaf" style="left:2vw; width:20px; --r0:-15deg; --r1:10deg; --r2:35deg; --sx:10px; --d:0s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest)"/></svg>
-  <svg class="scatter-leaf" style="left:8vw; width:26px; --r0:20deg; --r1:-8deg; --r2:-30deg; --sx:-16px; --d:0.06s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest-deep)"/></svg>
-  <svg class="scatter-leaf" style="left:14vw; width:16px; --r0:-8deg; --r1:18deg; --r2:40deg; --sx:14px; --d:0.14s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--mist-2)"/></svg>
-  <svg class="scatter-leaf" style="left:20vw; width:24px; --r0:12deg; --r1:-12deg; --r2:-28deg; --sx:-10px; --d:0.02s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest)"/></svg>
-  <svg class="scatter-leaf" style="left:26vw; width:18px; --r0:-22deg; --r1:6deg; --r2:26deg; --sx:12px; --d:0.18s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest-deep)"/></svg>
-  <svg class="scatter-leaf" style="left:33vw; width:28px; --r0:10deg; --r1:-16deg; --r2:-36deg; --sx:-18px; --d:0.08s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest)"/></svg>
-  <svg class="scatter-leaf" style="left:40vw; width:16px; --r0:-14deg; --r1:14deg; --r2:32deg; --sx:10px; --d:0.24s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--mist-2)"/></svg>
-  <svg class="scatter-leaf" style="left:47vw; width:22px; --r0:18deg; --r1:-6deg; --r2:-24deg; --sx:-12px; --d:0.04s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest-deep)"/></svg>
-  <svg class="scatter-leaf" style="left:54vw; width:26px; --r0:-10deg; --r1:16deg; --r2:34deg; --sx:16px; --d:0.16s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest)"/></svg>
-  <svg class="scatter-leaf" style="left:61vw; width:18px; --r0:14deg; --r1:-10deg; --r2:-30deg; --sx:-14px; --d:0.1s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest-deep)"/></svg>
-  <svg class="scatter-leaf" style="left:68vw; width:24px; --r0:-18deg; --r1:8deg; --r2:28deg; --sx:12px; --d:0.02s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--mist-2)"/></svg>
-  <svg class="scatter-leaf" style="left:74vw; width:20px; --r0:8deg; --r1:-14deg; --r2:-32deg; --sx:-10px; --d:0.2s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest)"/></svg>
-  <svg class="scatter-leaf" style="left:80vw; width:28px; --r0:-16deg; --r1:12deg; --r2:30deg; --sx:14px; --d:0.12s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest-deep)"/></svg>
-  <svg class="scatter-leaf" style="left:86vw; width:16px; --r0:20deg; --r1:-8deg; --r2:-26deg; --sx:-16px; --d:0.28s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest)"/></svg>
-  <svg class="scatter-leaf" style="left:92vw; width:22px; --r0:-12deg; --r1:16deg; --r2:36deg; --sx:10px; --d:0.06s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--mist-2)"/></svg>
-  <svg class="scatter-leaf" style="left:97vw; width:18px; --r0:16deg; --r1:-10deg; --r2:-28deg; --sx:-12px; --d:0.22s;" viewBox="0 0 20 20"><path d="M10 1C15 5 18 11 10 19C2 11 5 5 10 1Z" fill="var(--forest-deep)"/></svg>
-</div>
-
 <audio id="bg-music" src="audio/theme.mp3" loop preload="none"></audio>
 <button class="sound-toggle on" type="button" aria-label="Toggle background music">
   <svg class="off-icon" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6h4l5 5V4L7 9H3z"/><line x1="16" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="16" y2="15"/></svg>
@@ -466,13 +514,17 @@ body::before{
 </button>
 
 <div class="welcome-overlay" id="welcome-overlay">
-  <div class="welcome-card">
-    <div class="welcome-kicker">Graduation with Leadership Distinction</div>
-    <h1 class="welcome-title">Welcome</h1>
-    <p class="welcome-sub">A quick note before you scroll in — this site plays a bit of soft ambient sound and a few small nature-inspired touches along the way.</p>
-    <button class="welcome-btn" id="welcome-btn" type="button">Begin</button>
+  <div class="welcome-inner">
+    <div class="sign-wrap" id="sign-wrap">
+      <button class="sign-btn" id="welcome-btn" type="button" aria-label="Click to begin">
+        <img src="images/sign.png" alt="Dylan Kennedy — click to begin" width="651" height="547">
+      </button>
+    </div>
+    <p class="welcome-kicker">Graduation with Leadership Distinction</p>
   </div>
 </div>
+
+<div class="iris" id="iris" aria-hidden="true"></div>
 
 <nav class="navbar">
   <a class="nav-brand" href="#about">portfolio</a>
@@ -892,7 +944,8 @@ body::before{
 <script>
 const navItems = document.querySelectorAll('.nav-item');
 const sections = document.querySelectorAll('.page');
-const vine = document.querySelector('.vine-transition');
+const iris = document.getElementById('iris');
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const mountains = document.querySelector('.mountains');
 const parallaxEls = document.querySelectorAll('[data-speed]');
 const revealEls = document.querySelectorAll('.reveal');
@@ -907,30 +960,65 @@ const spyObserver = new IntersectionObserver((entries)=>{
 
 sections.forEach(sec => spyObserver.observe(sec));
 
-/* ---------- Nav click: quick vine flash + a playful blip, then smooth-scroll ---------- */
-let blipCtx;
-const blipNotes = [523.25, 587.33, 659.25, 783.99, 880.00]; // C D E G A (pentatonic)
-let blipIndex = 0;
-function playBlip(){
+/* ---------- Interactive click sounds: random pick from the licensed SFX pack ---------- */
+const sfxFiles = [
+  'audio/sfx/Manpu_16_A.wav',
+  'audio/sfx/Manpu_23_Hatena.wav',
+  'audio/sfx/Manpu_33_SmugFace.wav',
+  'audio/sfx/Manpu_Update_03_WaveHands.wav',
+  'audio/sfx/Manpu_Update_05_HereYouGo.wav',
+  'audio/sfx/Manpu_Update_Confetti00.wav'
+];
+const sfxPool = sfxFiles.map(src=>{
+  const a = new Audio(src);
+  a.preload = 'auto';
+  a.volume = 0.55;
+  return a;
+});
+function playRandomSfx(){
+  const el = sfxPool[Math.floor(Math.random() * sfxPool.length)];
   try{
-    blipCtx = blipCtx || new (window.AudioContext || window.webkitAudioContext)();
-    if(blipCtx.state === 'suspended'){ blipCtx.resume(); }
-    const now = blipCtx.currentTime;
-    const freq = blipNotes[blipIndex % blipNotes.length];
-    blipIndex++;
+    el.currentTime = 0;
+    el.play().catch(()=>{ /* ignore if blocked before first gesture */ });
+  }catch(e){ /* fail quietly */ }
+}
 
-    const osc = blipCtx.createOscillator();
-    const gain = blipCtx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(freq, now);
-    osc.frequency.setValueAtTime(freq * 1.4, now + 0.06);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.09, now + 0.012);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
-    osc.connect(gain).connect(blipCtx.destination);
-    osc.start(now);
-    osc.stop(now + 0.16);
-  }catch(e){ /* audio unsupported, fail quietly */ }
+/* ---------- Eased slide between sections (replaces the leaf wipe) ---------- */
+const NAV_H = 68;
+let slideFrame = null;
+
+function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
+
+function slideTo(el){
+  const startY = window.scrollY;
+  const maxY = document.documentElement.scrollHeight - window.innerHeight;
+  const endY = Math.max(0, Math.min(maxY, el.getBoundingClientRect().top + startY - NAV_H));
+  const dist = Math.abs(endY - startY);
+  if(prefersReduced || dist < 2){ window.scrollTo(0, endY); return; }
+
+  // Longer trips take longer, but never so long that the page feels stuck.
+  const dur = Math.min(1250, Math.max(650, dist * 0.55));
+  const t0 = performance.now();
+  if(slideFrame) cancelAnimationFrame(slideFrame);
+
+  // Any real scroll input from the user wins over the animation.
+  let cancelled = false;
+  const abort = ()=>{ cancelled = true; };
+  window.addEventListener('wheel', abort, { passive:true });
+  window.addEventListener('touchstart', abort, { passive:true });
+  const cleanup = ()=>{
+    window.removeEventListener('wheel', abort);
+    window.removeEventListener('touchstart', abort);
+  };
+
+  function step(now){
+    if(cancelled){ cleanup(); return; }
+    const p = Math.min(1, (now - t0) / dur);
+    window.scrollTo(0, startY + (endY - startY) * easeInOutCubic(p));
+    if(p < 1){ slideFrame = requestAnimationFrame(step); }
+    else { cleanup(); }
+  }
+  slideFrame = requestAnimationFrame(step);
 }
 
 navItems.forEach(item=>{
@@ -938,11 +1026,23 @@ navItems.forEach(item=>{
     e.preventDefault();
     const target = document.getElementById(item.dataset.target);
     if(!target) return;
-    playBlip();
-    vine.classList.add('run');
-    target.scrollIntoView({ behavior:'smooth', block:'start' });
-    setTimeout(()=>{ vine.classList.remove('run'); }, 870);
+    playRandomSfx();
+    slideTo(target);
   });
+});
+
+// the wordmark and any other in-page anchor ride the same slide
+document.querySelectorAll('a[href^="#"]:not(.nav-item)').forEach(link=>{
+  link.addEventListener('click', (e)=>{
+    const target = document.querySelector(link.getAttribute('href'));
+    if(!target) return;
+    e.preventDefault();
+    slideTo(target);
+  });
+});
+
+document.querySelectorAll('.contact-link').forEach(link=>{
+  link.addEventListener('click', ()=>{ playRandomSfx(); });
 });
 
 /* ---------- One scroll loop driving mountains growth, background parallax, and scrubbed reveals ---------- */
@@ -1007,6 +1107,7 @@ let wantsSound = true; // defaulted on; actual playback still needs a first user
 
 if(soundToggle){
   soundToggle.addEventListener('click', ()=>{
+    playRandomSfx();
     if(isPlaying){
       stopAmbience();
       soundToggle.classList.remove('on');
@@ -1034,11 +1135,76 @@ window.addEventListener('keydown', autoStartAudio);
 document.body.style.overflow = 'hidden';
 const welcomeOverlay = document.getElementById('welcome-overlay');
 const welcomeBtn = document.getElementById('welcome-btn');
+const signWrap = document.getElementById('sign-wrap');
+let welcomeDone = false;
+
+// Wide enough that the hole's edge clears the viewport corners, so the
+// black ring sits entirely offscreen when the iris is open.
+function irisOpenSize(){
+  return Math.hypot(window.innerWidth, window.innerHeight) + 80;
+}
+function setIris(d){ iris.style.width = d + 'px'; iris.style.height = d + 'px'; }
+
+const CLOSE_MS = 780, HOLD_MS = 170, OPEN_MS = 900;
+
+function runIris(cx, cy, atBlack){
+  const D = irisOpenSize();
+
+  // start wide open, centred on the sign, with no transition running
+  iris.style.left = cx + 'px';
+  iris.style.top  = cy + 'px';
+  iris.classList.remove('animate');
+  setIris(D);
+  iris.classList.add('active');
+  void iris.offsetWidth;                       // commit that state before animating
+
+  // squeeze shut around the sign
+  iris.style.setProperty('--iris-dur', CLOSE_MS + 'ms');
+  iris.classList.add('animate');
+  setIris(0);
+
+  setTimeout(()=>{
+    atBlack();                                 // swap the page in while nothing shows
+
+    // re-centre on the viewport and bloom back open
+    iris.classList.remove('animate');
+    iris.style.left = '50%';
+    iris.style.top  = '50%';
+    void iris.offsetWidth;
+    iris.style.setProperty('--iris-dur', OPEN_MS + 'ms');
+    iris.classList.add('animate');
+    setIris(D);
+
+    setTimeout(()=>{ iris.classList.remove('active','animate'); }, OPEN_MS + 40);
+  }, CLOSE_MS + HOLD_MS);
+}
+
+function revealSite(){
+  welcomeOverlay.style.display = 'none';
+  document.body.style.overflow = '';
+  window.scrollTo(0, 0);
+  onScrollFrame();
+}
+
 if(welcomeBtn){
   welcomeBtn.addEventListener('click', ()=>{
-    document.body.style.overflow = '';
-    if(welcomeOverlay) welcomeOverlay.classList.add('hide');
+    if(welcomeDone) return;
+    welcomeDone = true;
+
+    playRandomSfx();
     if(wantsSound) tryPlay();
+
+    if(prefersReduced){
+      welcomeOverlay.classList.add('hide');
+      setTimeout(revealSite, 500);
+      return;
+    }
+
+    if(signWrap) signWrap.classList.add('clicked');
+    const r = welcomeBtn.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    setTimeout(()=>{ runIris(cx, cy, revealSite); }, 330);
   });
 }
 </script>
