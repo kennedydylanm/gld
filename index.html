@@ -37,6 +37,14 @@
   --mist:#c9d6bd;
   --mist-2:#dfe8d3;
   --creme:#f7efdf;
+
+  /* Driven by the clock in JS — see paintSky(). Defaults are midday. */
+  --sky-1:#6fb6e6; --sky-2:#a9dcef; --sky-3:#d6ecf6;
+  --hill-far:#d2e2c6; --hill-mid:#b0cd99; --grass:#9ac47f;
+  --star-a:0;
+  --cel-x:50%; --cel-y:18%; --cel-color:#fffbe0; --cel-glow:rgba(255,251,224,0.45);
+  --sky-ink:#74664b; --sky-ink-soft:#8f8168; --sky-accent:#5b7d52;
+  --outline:rgba(255,250,228,0.92); --halo-dark:0;
   --display:'Bokutoh', 'Nunito Sans', system-ui, sans-serif;
   --body:'Bokutoh', 'Nunito Sans', system-ui, sans-serif;
   --script:'Bokutoh', 'Nunito Sans', system-ui, sans-serif;
@@ -46,7 +54,8 @@
 html{scroll-behavior:auto;} /* JS drives the eased section slide */
 
 body{
-  background:var(--bg);
+  background:linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 44%, var(--sky-3) 100%);
+  background-attachment:fixed;
   color:var(--ink);
   font-family:var(--body);
   letter-spacing:0.012em;
@@ -56,14 +65,82 @@ body{
   position:relative;
 }
 
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background-image:radial-gradient(rgba(93,120,80,0.05) 1px, transparent 1px);
-  background-size:14px 14px;
-  pointer-events:none;
-  z-index:1;
+/* ============================================================
+   THE ISLAND
+   A curved horizon (the ground is a very wide ellipse, so it falls
+   away at the edges the way a small round world does), rolling hills
+   behind it, and a sky that tracks the visitor's actual clock.
+   ============================================================ */
+.world{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+
+.stars{
+  position:absolute; inset:0;
+  opacity:var(--star-a);
+  transition:opacity 2s linear;
+  background-image:
+    radial-gradient(2px 2px at 32.7% 10.2%, rgba(255,253,240,0.57) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 81.5% 6.7%, rgba(255,253,240,0.58) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 50.7% 3.3%, rgba(255,253,240,0.74) 50%, transparent 51%),
+    radial-gradient(1px 1px at 24.6% 34.6%, rgba(255,253,240,0.92) 50%, transparent 51%),
+    radial-gradient(2px 2px at 13.1% 14.6%, rgba(255,253,240,0.81) 50%, transparent 51%),
+    radial-gradient(1px 1px at 7.1% 36.7%, rgba(255,253,240,0.99) 50%, transparent 51%),
+    radial-gradient(1px 1px at 5.6% 53.4%, rgba(255,253,240,0.74) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 54.0% 35.8%, rgba(255,253,240,0.92) 50%, transparent 51%),
+    radial-gradient(2px 2px at 18.7% 36.5%, rgba(255,253,240,0.63) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 10.5% 44.4%, rgba(255,253,240,0.58) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 21.2% 42.5%, rgba(255,253,240,0.9) 50%, transparent 51%),
+    radial-gradient(1px 1px at 46.6% 57.3%, rgba(255,253,240,0.68) 50%, transparent 51%),
+    radial-gradient(1px 1px at 78.8% 43.6%, rgba(255,253,240,0.59) 50%, transparent 51%),
+    radial-gradient(1px 1px at 30.4% 31.2%, rgba(255,253,240,0.88) 50%, transparent 51%),
+    radial-gradient(1px 1px at 29.2% 60.8%, rgba(255,253,240,0.78) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 17.2% 21.9%, rgba(255,253,240,0.74) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 95.3% 5.7%, rgba(255,253,240,0.81) 50%, transparent 51%),
+    radial-gradient(2px 2px at 86.8% 20.1%, rgba(255,253,240,0.71) 50%, transparent 51%),
+    radial-gradient(1px 1px at 49.7% 49.6%, rgba(255,253,240,0.93) 50%, transparent 51%),
+    radial-gradient(2px 2px at 93.6% 29.9%, rgba(255,253,240,0.58) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 72.7% 19.9%, rgba(255,253,240,1.0) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 81.5% 18.4%, rgba(255,253,240,0.95) 50%, transparent 51%),
+    radial-gradient(1px 1px at 35.0% 58.4%, rgba(255,253,240,0.63) 50%, transparent 51%),
+    radial-gradient(1px 1px at 12.5% 4.6%, rgba(255,253,240,0.61) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 25.3% 24.8%, rgba(255,253,240,0.59) 50%, transparent 51%),
+    radial-gradient(1px 1px at 45.0% 34.5%, rgba(255,253,240,0.92) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 85.7% 18.0%, rgba(255,253,240,0.99) 50%, transparent 51%),
+    radial-gradient(1px 1px at 67.9% 24.2%, rgba(255,253,240,0.62) 50%, transparent 51%),
+    radial-gradient(1px 1px at 18.3% 15.1%, rgba(255,253,240,0.56) 50%, transparent 51%),
+    radial-gradient(1px 1px at 82.4% 12.1%, rgba(255,253,240,0.55) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 42.1% 23.5%, rgba(255,253,240,0.69) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 13.3% 53.4%, rgba(255,253,240,0.84) 50%, transparent 51%),
+    radial-gradient(2px 2px at 73.5% 28.9%, rgba(255,253,240,0.91) 50%, transparent 51%),
+    radial-gradient(1px 1px at 39.5% 25.3%, rgba(255,253,240,0.77) 50%, transparent 51%),
+    radial-gradient(1px 1px at 40.2% 12.6%, rgba(255,253,240,0.75) 50%, transparent 51%),
+    radial-gradient(1px 1px at 11.8% 37.6%, rgba(255,253,240,0.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 15.8% 7.2%, rgba(255,253,240,0.83) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 7.9% 13.7%, rgba(255,253,240,0.62) 50%, transparent 51%),
+    radial-gradient(1px 1px at 25.7% 22.2%, rgba(255,253,240,0.76) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 12.3% 30.8%, rgba(255,253,240,0.77) 50%, transparent 51%),
+    radial-gradient(2px 2px at 31.6% 9.8%, rgba(255,253,240,0.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 26.9% 51.6%, rgba(255,253,240,0.78) 50%, transparent 51%),
+    radial-gradient(1px 1px at 21.1% 59.1%, rgba(255,253,240,0.62) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 54.2% 2.6%, rgba(255,253,240,0.68) 50%, transparent 51%),
+    radial-gradient(1px 1px at 64.0% 6.6%, rgba(255,253,240,0.78) 50%, transparent 51%),
+    radial-gradient(1px 1px at 90.0% 22.7%, rgba(255,253,240,0.79) 50%, transparent 51%);
+}
+.stars::after{
+  content:""; position:absolute; inset:0;
+  background:inherit; opacity:0.55;
+  animation:twinkle 4.5s ease-in-out infinite alternate;
+}
+@keyframes twinkle{ from{ opacity:0.15; } to{ opacity:0.7; } }
+
+/* sun by day, moon by night — same element, walked along an arc */
+.celestial{
+  position:absolute;
+  left:var(--cel-x); top:var(--cel-y);
+  width:76px; height:76px; margin:-38px 0 0 -38px;
+  border-radius:50%;
+  background:var(--cel-color);
+  box-shadow:0 0 42px 18px var(--cel-glow);
+  transition:background 2s linear, box-shadow 2s linear;
 }
 
 .mountains{
@@ -73,6 +150,26 @@ body::before{
   height:38vh;
   z-index:0;
   pointer-events:none;
+}
+.hill, .ground{ position:absolute; bottom:0; transform:translateX(-50%); }
+.hill{ transition:background 2s linear; }
+.hill.far{ left:56%; width:210vw; height:78%; background:var(--hill-far);
+  border-radius:50% 50% 0 0 / 34% 34% 0 0; }
+.hill.mid{ left:43%; width:180vw; height:60%; background:var(--hill-mid);
+  border-radius:50% 50% 0 0 / 30% 30% 0 0; }
+
+/* The lawn. Two 45-degree stripe sets cross into the soft diamond
+   lattice the games use for grass; the inset highlight is the lip of
+   the turf catching light at the horizon. */
+.ground{
+  left:50%; width:250vw; height:47%;
+  border-radius:50% 50% 0 0 / 24% 24% 0 0;
+  background-color:var(--grass);
+  background-image:
+    repeating-linear-gradient(45deg,  rgba(255,255,255,0.055) 0 26px, transparent 26px 52px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,0.055) 0 26px, transparent 26px 52px);
+  box-shadow:inset 0 7px 0 rgba(255,255,255,0.16);
+  transition:background-color 2s linear;
 }
 .mountains svg{ width:100%; height:100%; display:block; }
 
@@ -102,7 +199,7 @@ body::before{
 @keyframes glide{ from{ transform:translateY(0) rotate(0deg); } to{ transform:translateY(-3px) rotate(-3deg); } }
 
 @media (prefers-reduced-motion: reduce){
-  .cloud, .bird, .bird-glide{ animation:none !important; }
+  .cloud, .bird, .bird-glide, .stars::after{ animation:none !important; }
 }
 
 .sound-toggle{
@@ -269,7 +366,36 @@ body::before{
 .page{ padding:100px 8vw 90px; position:relative; scroll-margin-top:68px; border-bottom:1px dashed var(--mist); }
 .page:last-of-type{ border-bottom:none; }
 
-.page-kicker{ font-family:var(--script); font-size:14px; letter-spacing:0.16em; text-transform:uppercase; color:var(--forest); margin-bottom:10px; }
+/* Anything not inside a dialogue box reads against the sky AND scrolls over
+   the grass, where brown-on-green falls to about 1.8:1. So this text carries
+   a real outline rather than a soft glow — the trick the games use for their
+   own UI. The outline flips dark at night, when the text turns cream. */
+.page-title, .page-kicker, .page-sub, .bio-text, .philosophy,
+.insight-list, .involvement-note, .contact-link, .contact-note{
+  text-shadow:
+    -1px -1px 0 var(--outline),  1px -1px 0 var(--outline),
+    -1px  1px 0 var(--outline),  1px  1px 0 var(--outline),
+    -1px  0   0 var(--outline),  1px  0   0 var(--outline),
+     0   -1px 0 var(--outline),  0    1px 0 var(--outline),
+     0 3px 16px rgba(12,24,56, var(--halo-dark));
+  transition:color 2s linear, text-shadow 2s linear;
+}
+/* display sizes take a heavier outline so it stays proportional */
+.page-title{
+  text-shadow:
+    -2px -2px 0 var(--outline),  2px -2px 0 var(--outline),
+    -2px  2px 0 var(--outline),  2px  2px 0 var(--outline),
+    -2px  0   0 var(--outline),  2px  0   0 var(--outline),
+     0   -2px 0 var(--outline),  0    2px 0 var(--outline),
+    -1px -2px 0 var(--outline),  1px -2px 0 var(--outline),
+    -1px  2px 0 var(--outline),  1px  2px 0 var(--outline),
+     0 5px 22px rgba(12,24,56, var(--halo-dark));
+}
+.page-title, .bio-text, .philosophy, .insight-list, .involvement-note{ color:var(--sky-ink); }
+.page-sub, .contact-note, .contact-link{ color:var(--sky-ink-soft); }
+.page-kicker, .page-title .accent, .contact-link:hover{ color:var(--sky-accent); }
+
+.page-kicker{ font-family:var(--script); font-size:14px; letter-spacing:0.16em; text-transform:uppercase; margin-bottom:10px; }
 
 .page-title{
   font-family:var(--display);
@@ -279,9 +405,9 @@ body::before{
   color:var(--ink);
   margin-bottom:8px;
 }
-.page-title .accent{ color:var(--forest); font-style:normal; font-weight:500; }
+.page-title .accent{ font-style:normal; font-weight:500; }
 
-.page-sub{ font-size:15px; color:var(--ink-soft); max-width:66ch; line-height:1.9; margin-bottom:10px; }
+.page-sub{ font-size:15px; max-width:66ch; line-height:1.9; margin-bottom:10px; }
 
 .profile-photo{
   width:132px; height:132px; border-radius:50%;
@@ -480,12 +606,15 @@ body::before{
 </head>
 <body>
 
-<div class="mountains">
-  <svg viewBox="0 0 1440 400" preserveAspectRatio="none">
-    <polygon points="0,400 0,220 180,140 360,210 560,110 780,190 980,90 1180,180 1440,120 1440,400" fill="#dbe6cd" opacity="0.9"/>
-    <polygon points="0,400 0,270 220,190 420,250 640,170 860,230 1080,150 1300,220 1440,190 1440,400" fill="#aec895" opacity="0.9"/>
-    <polygon points="0,400 0,320 260,260 500,300 740,240 980,290 1220,250 1440,290 1440,400" fill="#7fa068" opacity="0.95"/>
-  </svg>
+<div class="world" aria-hidden="true">
+  <div class="stars"></div>
+  <div class="celestial"></div>
+</div>
+
+<div class="mountains" aria-hidden="true">
+  <div class="hill far"></div>
+  <div class="hill mid"></div>
+  <div class="ground"></div>
 </div>
 
 <svg class="corner-fern top-right" data-speed="0.06" viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1044,6 +1173,109 @@ document.querySelectorAll('a[href^="#"]:not(.nav-item)').forEach(link=>{
 document.querySelectorAll('.contact-link').forEach(link=>{
   link.addEventListener('click', ()=>{ playRandomSfx(); });
 });
+
+/* ---------- Time of day: the sky follows the visitor's own clock ----------
+   Each stop is an hour and the full set of colours the world wears at that
+   hour. Between stops everything is interpolated, so the change is
+   continuous rather than a set of themes that snap over. */
+const SKY_STOPS = [
+  { h: 0.0,  sky1:'#16265a', sky2:'#2c3f76', sky3:'#3f5590',
+             far:'#39485c', mid:'#2b4438', grass:'#24392c',
+             star:1.0, cel:'#f3f1d8', glow:'rgba(243,241,216,0.30)', hd:0.62 },
+  { h: 5.0,  sky1:'#4a5b9c', sky2:'#9a7fa8', sky3:'#f0a48c',
+             far:'#7a808e', mid:'#556d55', grass:'#4d6b46',
+             star:0.30, cel:'#ffd9a0', glow:'rgba(255,183,140,0.42)', hd:0.40 },
+  { h: 8.0,  sky1:'#79b9e0', sky2:'#b6dff0', sky3:'#cfe9f2',
+             far:'#cbdcc0', mid:'#a9c795', grass:'#96c07c',
+             star:0.0, cel:'#fff3c4', glow:'rgba(255,243,196,0.45)', hd:0.0 },
+  { h:13.0,  sky1:'#6fb6e6', sky2:'#a9dcef', sky3:'#d6ecf6',
+             far:'#d2e2c6', mid:'#b0cd99', grass:'#9ac47f',
+             star:0.0, cel:'#fffbe0', glow:'rgba(255,251,224,0.45)', hd:0.0 },
+  { h:17.0,  sky1:'#7aa8d8', sky2:'#cbc0a8', sky3:'#f7c98a',
+             far:'#c6cdae', mid:'#a1b684', grass:'#8aa768',
+             star:0.0, cel:'#ffcf7a', glow:'rgba(255,190,110,0.50)', hd:0.0 },
+  { h:19.5,  sky1:'#3f4a86', sky2:'#8a6a92', sky3:'#e88f7a',
+             far:'#77747f', mid:'#5c6850', grass:'#526642',
+             star:0.28, cel:'#ff9d6e', glow:'rgba(255,140,100,0.45)', hd:0.45 },
+  { h:22.0,  sky1:'#16265a', sky2:'#2c3f76', sky3:'#3f5590',
+             far:'#39485c', mid:'#2b4438', grass:'#24392c',
+             star:1.0, cel:'#f3f1d8', glow:'rgba(243,241,216,0.30)', hd:0.62 }
+];
+
+/* Text sitting on the sky can't lerp its colour along with the scene: at
+   dawn and dusk the ink and its outline would both pass through the same
+   mid-tone and cancel each other out (measured 1.03:1 at 18:00 — invisible).
+   So the scene fades continuously while the ink flips as a pair, once, at a
+   luminance threshold. CSS transitions the flip over two seconds. */
+const DAY_INK   = { ink:'#74664b', soft:'#8f8168', accent:'#5b7d52',
+                    out:'rgba(255,250,228,0.94)', hd:0 };
+const NIGHT_INK = { ink:'#fff6dd', soft:'#ded3b6', accent:'#b6dea6',
+                    out:'rgba(12,22,52,0.88)',  hd:0.5 };
+let isNight = null;
+
+const hex2rgb = h => [1,3,5].map(i => parseInt(h.slice(i, i+2), 16));
+const relLum = hex => {
+  const c = hex2rgb(hex).map(v => { v/=255; return v <= 0.03928 ? v/12.92 : ((v+0.055)/1.055)**2.4; });
+  return 0.2126*c[0] + 0.7152*c[1] + 0.0722*c[2];
+};
+const mixHex = (a, b, t) => {
+  const A = hex2rgb(a), B = hex2rgb(b);
+  return '#' + A.map((v,i) => Math.round(v + (B[i]-v)*t).toString(16).padStart(2,'0')).join('');
+};
+const mixNum = (a, b, t) => a + (b-a)*t;
+function mixRgba(a, b, t){
+  const p = s => s.match(/[\d.]+/g).map(Number);
+  const A = p(a), B = p(b);
+  return 'rgba(' + A.map((v,i)=> i<3 ? Math.round(mixNum(v,B[i],t)) : +mixNum(v,B[i],t).toFixed(3)).join(',') + ')';
+}
+
+function paintSky(){
+  const now = new Date();
+  const h = now.getHours() + now.getMinutes()/60;
+
+  // find the bracketing stops, wrapping past midnight
+  let i = 0;
+  while(i < SKY_STOPS.length - 1 && SKY_STOPS[i+1].h <= h) i++;
+  const a = SKY_STOPS[i];
+  const b = SKY_STOPS[i+1] || SKY_STOPS[0];
+  const span = (b.h > a.h ? b.h : b.h + 24) - a.h;
+  const t = span > 0 ? Math.min(1, (h - a.h) / span) : 0;
+
+  const r = document.documentElement.style;
+  const sky2  = mixHex(a.sky2, b.sky2, t);
+  const grass = mixHex(a.grass, b.grass, t);
+
+  r.setProperty('--sky-1', mixHex(a.sky1, b.sky1, t));
+  r.setProperty('--sky-2', sky2);
+  r.setProperty('--sky-3', mixHex(a.sky3, b.sky3, t));
+  r.setProperty('--hill-far', mixHex(a.far, b.far, t));
+  r.setProperty('--hill-mid', mixHex(a.mid, b.mid, t));
+  r.setProperty('--grass', grass);
+  r.setProperty('--star-a', mixNum(a.star, b.star, t).toFixed(3));
+  r.setProperty('--cel-color', mixHex(a.cel, b.cel, t));
+  r.setProperty('--cel-glow', mixRgba(a.glow, b.glow, t));
+
+  // how bright is what the text actually sits on? sky above, grass below
+  const scene = (relLum(sky2) + relLum(grass)) / 2;
+  if (isNight === null) isNight = scene < 0.32;          // first paint
+  else if (isNight && scene > 0.34) isNight = false;      // hysteresis, so the
+  else if (!isNight && scene < 0.30) isNight = true;      // minute tick can't flicker
+
+  const P = isNight ? NIGHT_INK : DAY_INK;
+  r.setProperty('--sky-ink', P.ink);
+  r.setProperty('--sky-ink-soft', P.soft);
+  r.setProperty('--sky-accent', P.accent);
+  r.setProperty('--outline', P.out);
+  r.setProperty('--halo-dark', String(P.hd));
+
+  // Sun arcs east-to-west from 06:00 to 18:00; the moon takes the night shift.
+  const day = h >= 6 && h < 18;
+  const p = day ? (h - 6) / 12 : ((h < 6 ? h + 6 : h - 18) / 12);
+  r.setProperty('--cel-x', (8 + p * 84).toFixed(1) + '%');
+  r.setProperty('--cel-y', (86 - Math.sin(p * Math.PI) * 68).toFixed(1) + '%');
+}
+paintSky();
+setInterval(paintSky, 60 * 1000);
 
 /* ---------- One scroll loop driving mountains growth, background parallax, and scrubbed reveals ---------- */
 function onScrollFrame(){
