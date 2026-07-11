@@ -1135,8 +1135,20 @@ const sfxPool = sfxFiles.map(src=>{
   a.volume = 0.55;
   return a;
 });
+let lastSfx = -1;
 function playRandomSfx(){
-  const el = sfxPool[Math.floor(Math.random() * sfxPool.length)];
+  if(sfxPool.length === 0) return;
+  let i;
+  if(sfxPool.length === 1){
+    i = 0;
+  }else{
+    // pick uniformly from every clip EXCEPT the one just played, so it's still
+    // random but never fires the same sound twice in a row
+    i = Math.floor(Math.random() * (sfxPool.length - 1));
+    if(i >= lastSfx) i++;
+  }
+  lastSfx = i;
+  const el = sfxPool[i];
   try{
     el.currentTime = 0;
     el.play().catch(()=>{ /* ignore if blocked before first gesture */ });
@@ -1450,9 +1462,6 @@ function tryPlay(){
   bgMusic.play().then(()=>{
     isPlaying = true;
     if(soundToggle) soundToggle.classList.add('on');
-    window.removeEventListener('scroll', autoStartAudio);
-    window.removeEventListener('pointerdown', autoStartAudio);
-    window.removeEventListener('keydown', autoStartAudio);
   }).catch((err)=>{ console.error('bg-music play() failed:', err); });
 }
 
@@ -1479,18 +1488,10 @@ if(soundToggle){
   });
 }
 
-// Browsers only unlock audio on a click, keypress, or tap — scrolling alone
-// is explicitly excluded from that list in Chrome/Firefox/Safari. We still
-// treat scroll as the primary trigger (matches the intended "start as you
-// scroll" feel), but keep listening on click/key too since a scroll-triggered
-// resume can silently fail — it'll just try again on the next qualifying event.
-function autoStartAudio(){
-  if(wantsSound && !isPlaying){ tryPlay(); }
-}
-window.addEventListener('scroll', autoStartAudio, { passive:true });
-window.addEventListener('pointerdown', autoStartAudio);
-window.addEventListener('keydown', autoStartAudio);
-
+// Music is unlocked exclusively by the sign click (see the welcome handler
+// below), so the theme starts in sync with the iris transition rather than on
+// some earlier stray interaction. If the reader muted and later un-mutes, the
+// sound toggle re-starts it; nothing else auto-starts audio.
 /* ---------- Welcome screen: doubles as the required user gesture to unlock audio ---------- */
 document.body.style.overflow = 'hidden';
 const welcomeOverlay = document.getElementById('welcome-overlay');
