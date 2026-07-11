@@ -418,15 +418,33 @@ body{
 }
 
 /* In the write-up sections (Key Insights + Leadership) the photo is small and
-   floats right so the prose wraps around it; figure + caption travel together
-   in .figure-float. Project cards keep the old full-width figures. */
+   floats right so the prose wraps around it. Photo and caption sit together in
+   a tinted rounded card — a distinct surface from the cream dialogue box, with
+   its own smaller, green caption type so it reads as a separate object. */
 .figure-float{
-  float:right; width:300px; max-width:42%;
-  margin:6px 0 16px 30px;
+  float:right; width:294px; max-width:44%;
+  margin:6px 0 18px 30px;
   shape-outside:margin-box;
+  background:#e4ecd5;
+  border:2px solid #c9d6bd;
+  border-radius:30px 34px 30px 32px / 22px 20px 24px 21px;
+  padding:12px 12px 14px;
+  box-shadow:0 8px 20px rgba(61,90,58,0.14);
 }
-.figure-float .figure-img{ margin-top:0; }
-.figure-float .figure-caption{ padding:8px 2px 0; }
+.figure-float .figure-img{
+  margin-top:0;
+  border:none;
+  border-radius:20px 22px 20px 21px / 15px 14px 16px 14px;
+  box-shadow:0 3px 10px rgba(61,90,58,0.14);
+}
+.figure-float .figure-caption{
+  font-size:11px;
+  line-height:1.55;
+  color:var(--forest-deep);
+  padding:11px 8px 2px;
+  text-align:center;
+}
+.figure-float .figure-caption .edit{ background:#fff7e0; border-radius:4px; padding:1px 4px; }
 .insight-body, .lead-card{ overflow:hidden; }  /* contain the float */
 
 .involvement-note{
@@ -593,7 +611,7 @@ body{
   }
   .project-year{ white-space:normal; max-width:calc(100% - 46px); }
   .insight-card{ padding:26px 22px; }
-  .figure-float{ float:none; width:100%; max-width:none; margin:16px 0 0; }
+  .figure-float{ float:none; width:100%; max-width:none; margin:18px 0 4px; }
   .mountains{ height:22vh; }
   .plan-table{ display:block; overflow-x:auto; }
 }
