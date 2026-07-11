@@ -397,10 +397,11 @@ body{
 .page-sub{ font-size:15px; max-width:66ch; line-height:1.9; margin-bottom:10px; }
 
 .profile-photo{
-  width:132px; height:132px; border-radius:50%;
-  object-fit:cover; border:4px solid var(--bg-2);
-  box-shadow:0 0 0 2px var(--mist), 0 12px 26px rgba(61,90,58,0.18);
-  float:right; margin:-10px 0 20px 28px;
+  width:230px; height:280px; border-radius:22px;
+  object-fit:cover; border:5px solid var(--paper);
+  box-shadow:0 0 0 2px var(--mist), 0 16px 34px rgba(61,90,58,0.22);
+  float:right; shape-outside:inset(0 round 22px);
+  margin:4px 0 18px 34px;
 }
 
 .figure-img{
@@ -416,6 +417,18 @@ body{
   padding:10px 4px 0; line-height:1.6;
 }
 
+/* In the write-up sections (Key Insights + Leadership) the photo is small and
+   floats right so the prose wraps around it; figure + caption travel together
+   in .figure-float. Project cards keep the old full-width figures. */
+.figure-float{
+  float:right; width:300px; max-width:42%;
+  margin:6px 0 16px 30px;
+  shape-outside:margin-box;
+}
+.figure-float .figure-img{ margin-top:0; }
+.figure-float .figure-caption{ padding:8px 2px 0; }
+.insight-body, .lead-card{ overflow:hidden; }  /* contain the float */
+
 .involvement-note{
   margin-top:26px; display:flex; gap:18px; align-items:center;
   background:var(--bg-2); border:1px solid var(--mist); border-radius:18px; padding:16px 20px;
@@ -425,7 +438,7 @@ body{
 .involvement-note strong{ color:var(--forest-deep); }
 
 @media (max-width:600px){
-  .profile-photo{ float:none; display:block; margin:0 auto 20px; }
+  .profile-photo{ float:none; display:block; width:200px; height:244px; margin:0 auto 22px; }
   .involvement-note{ flex-direction:column; text-align:center; }
 }
 
@@ -580,6 +593,7 @@ body{
   }
   .project-year{ white-space:normal; max-width:calc(100% - 46px); }
   .insight-card{ padding:26px 22px; }
+  .figure-float{ float:none; width:100%; max-width:none; margin:16px 0 0; }
   .mountains{ height:22vh; }
   .plan-table{ display:block; overflow-x:auto; }
 }
@@ -723,6 +737,10 @@ body{
             <span class="tag btc">BTC · AIChE Annual Student Conference</span>
           </div>
           <div class="insight-body">
+            <div class="figure-float">
+              <div class="figure-img"><img src="images/chemecube.jpg" alt="Vitamin Cube team at the AIChE Annual Student Conference"></div>
+              <p class="figure-caption">Our Vitamin Cube team after the pitch at the AIChE Annual Student Conference, ExxonMobil-sponsored ChemE Cube competition — the presentation that placed 2nd internationally.</p>
+            </div>
             <p>In SPCH 140, I studied how effective communication depends on adapting the same underlying
               message to fit the expectations, priorities, and vocabulary of a specific audience —
               <span class="edit">what the course framed as [confirm your course's exact term/model, e.g. audience analysis or the rhetorical triangle]</span>.
@@ -750,10 +768,6 @@ body{
               <li>WTC — graded speech/assignment from SPCH 140 demonstrating audience analysis</li>
               <li>BTC — Vitamin Cube investor pitch deck and ChemE Car poster, captioned to show the shift in framing</li>
             </ul>
-            <div class="figure-img">
-              <img src="images/chemecube.jpg" alt="Vitamin Cube team at the AIChE Annual Student Conference">
-            </div>
-            <p class="figure-caption">Our Vitamin Cube team after the pitch at the AIChE Annual Student Conference, ExxonMobil-sponsored ChemE Cube competition — the presentation that placed 2nd internationally.</p>
           </div>
         </div>
 
@@ -768,6 +782,10 @@ body{
             <span class="tag btc">BTC · Enviva Biomass Internship</span>
           </div>
           <div class="insight-body">
+            <div class="figure-float">
+              <div class="figure-img"><img src="images/enviva-wesp.jpg" alt="Working on the WESP unit at Enviva Biomass"></div>
+              <p class="figure-caption">On site at the WESP unit at Enviva Biomass's Greenwood, SC facility, where I developed and scoped the chemical additive discussed above.</p>
+            </div>
             <p>ECHE-573 examines the transition from a fossil-fuel-based energy economy to a sustainable one
               not as a purely technical problem, but as one that has to be weighed simultaneously against
               economic, political, and social factors. The course's core framework is that a technically
@@ -795,10 +813,6 @@ body{
               <li>WTC — project or case study response from ECHE-573 <span class="edit">(pending Spring 2026 completion — confirm before submission)</span></li>
               <li>BTC — redacted data/chart showing before-and-after results of the flush system change</li>
             </ul>
-            <div class="figure-img">
-              <img src="images/enviva-wesp.jpg" alt="Working on the WESP unit at Enviva Biomass">
-            </div>
-            <p class="figure-caption">On site at the WESP unit at Enviva Biomass's Greenwood, SC facility, where I developed and scoped the chemical additive discussed above.</p>
           </div>
         </div>
 
@@ -876,6 +890,10 @@ body{
 
         <div class="lead-card reveal">
           <h3>Recommendations / Solutions</h3>
+          <div class="figure-float">
+              <div class="figure-img"><img src="images/aiche-leadership.jpg" alt="AIChE executive team"></div>
+              <p class="figure-caption">The AIChE executive team I helped lead as Vice President <span class="edit">[EDIT: confirm the event/conference this was taken at]</span>, whose sponsorship and fundraising work funds the competition teams behind Key Insight #1.</p>
+            </div>
           <p>I recommend formally documenting the WESP additive as a standardized process improvement and
             building the case needed to pilot it at a second Enviva facility. This draws directly on
             <strong>Key Insight #2</strong>: a technically sound fix doesn't get adopted on technical merit
@@ -892,10 +910,6 @@ body{
             relationships with the people who control budget, and presenting a clear, credible ask rather
             than just a good idea. Scaling the WESP fix to a second plant is the same kind of ask, at a
             larger scale.</p>
-          <div class="figure-img">
-            <img src="images/aiche-leadership.jpg" alt="AIChE executive team">
-          </div>
-          <p class="figure-caption">The AIChE executive team I helped lead as Vice President <span class="edit">[EDIT: confirm the event/conference this was taken at]</span>, whose sponsorship and fundraising work funds the competition teams behind Key Insight #1.</p>
         </div>
 
         <div class="lead-card reveal">
