@@ -1547,9 +1547,39 @@ function revealSite(){
   onScrollFrame();
 }
 
+// Read the sign PNG's alpha into an offscreen canvas once, so a click can be
+// tested against the actual wood shape instead of the button's rectangle.
+const signImg = welcomeBtn ? welcomeBtn.querySelector('img') : null;
+let signAlpha = null, signAW = 0, signAH = 0;
+function buildSignMask(){
+  if(!signImg || !signImg.naturalWidth) return;
+  const c = document.createElement('canvas');
+  signAW = c.width = signImg.naturalWidth;
+  signAH = c.height = signImg.naturalHeight;
+  const ctx = c.getContext('2d', { willReadFrequently:true });
+  ctx.drawImage(signImg, 0, 0);
+  try{ signAlpha = ctx.getImageData(0, 0, signAW, signAH).data; }
+  catch(e){ signAlpha = null; }   // if ever tainted, fall back to whole button
+}
+if(signImg){
+  if(signImg.complete) buildSignMask();
+  else signImg.addEventListener('load', buildSignMask);
+}
+// true only if the click landed on an opaque (wood) pixel of the sign
+function clickHitWood(ev){
+  if(!signAlpha) return true;     // mask unavailable -> don't block the click
+  const r = signImg.getBoundingClientRect();
+  if(r.width === 0 || r.height === 0) return true;
+  const px = Math.floor((ev.clientX - r.left) / r.width  * signAW);
+  const py = Math.floor((ev.clientY - r.top)  / r.height * signAH);
+  if(px < 0 || py < 0 || px >= signAW || py >= signAH) return false;
+  return signAlpha[(py * signAW + px) * 4 + 3] > 40;   // alpha channel
+}
+
 if(welcomeBtn){
-  welcomeBtn.addEventListener('click', ()=>{
+  welcomeBtn.addEventListener('click', (ev)=>{
     if(welcomeDone) return;
+    if(!clickHitWood(ev)) return;   // ignore clicks on the transparent corners
     welcomeDone = true;
 
     playRandomSfx();
