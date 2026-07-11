@@ -149,17 +149,37 @@ body{
   z-index:0;
   pointer-events:none;
 }
-.hill, .ground{ position:absolute; bottom:0; transform:translateX(-50%); }
-.hill.far{ left:56%; width:210vw; height:78%; background:var(--hill-far);
-  border-radius:50% 50% 0 0 / 34% 34% 0 0; }
-.hill.mid{ left:43%; width:180vw; height:60%; background:var(--hill-mid);
-  border-radius:50% 50% 0 0 / 30% 30% 0 0; }
+/* Animal Crossing hills read as fat, soft mounds stacked in gentle layers. Each
+   blob is a wide ellipse rooted well below the horizon so only its rounded top
+   shows; heavy overlap fuses them into one undulating ridge rather than a row
+   of circles. A thin lighter band sits just under each crest as the lit rim of
+   grass — a top-anchored radial, so it hugs the crest instead of ringing the
+   whole shape the way an inset shadow would. */
+.hill{ position:absolute; left:0; right:0; bottom:0; }
+.hill span{
+  position:absolute; bottom:0; display:block;
+  border-radius:50% 50% 46% 46% / 60% 60% 40% 40%;
+}
+.hill span::before{
+  content:""; position:absolute; inset:0;
+  border-radius:inherit;
+  background:radial-gradient(120% 90% at 50% 6%,
+    rgba(255,255,255,0.22) 0 12%, rgba(255,255,255,0) 24%);
+}
+.hill.far span{ background:var(--hill-far); }
+.hill.far .a{ left:-14%;  width:70%;  height:150%; }
+.hill.far .b{ left:24%;   width:88%;  height:190%; }
+.hill.far .c{ right:-16%; width:66%;  height:140%; }
+.hill.mid span{ background:var(--hill-mid); }
+.hill.mid .a{ left:-12%;  width:82%;  height:160%; }
+.hill.mid .b{ right:-14%; width:86%;  height:186%; }
 
 /* The lawn. Two 45-degree stripe sets cross into the soft diamond
    lattice the games use for grass; the inset highlight is the lip of
    the turf catching light at the horizon. */
 .ground{
-  left:50%; width:250vw; height:47%;
+  position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:250vw; height:47%;
   border-radius:50% 50% 0 0 / 24% 24% 0 0;
   background-color:var(--grass);
   background-image:
@@ -637,8 +657,8 @@ body{
 </div>
 
 <div class="mountains" aria-hidden="true">
-  <div class="hill far"></div>
-  <div class="hill mid"></div>
+  <div class="hill far"><span class="a"></span><span class="b"></span><span class="c"></span></div>
+  <div class="hill mid"><span class="a"></span><span class="b"></span></div>
   <div class="ground"></div>
 </div>
 
@@ -1269,13 +1289,36 @@ function paintSky(p){
   r.setProperty('--outline', P.out);
   r.setProperty('--halo-dark', String(P.hd));
 
-  // The sun tracks west and drops. Past the horizon the hills, which paint
-  // over the sky layer, hide it — so it sets behind the land on its own.
-  r.setProperty('--cel-x', (26 + p * 58).toFixed(1) + '%');
-  r.setProperty('--cel-y', (14 + Math.pow(p, 1.7) * 88).toFixed(1) + '%');
+  // The sun tracks west and drops. Its travel is eased, not linear, so it
+  // crawls at the top of a scroll, accelerates through the middle, then
+  // settles slowly into the horizon — a slow-fast-slow arc. Past the horizon
+  // the hills paint over the sky and hide it, so it sets on its own.
+  const e = p < 0.5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2;  // easeInOutCubic
+  r.setProperty('--cel-x', (24 + e * 60).toFixed(1) + '%');
+  r.setProperty('--cel-y', (12 + e * 92).toFixed(1) + '%');
 }
 
 /* ---------- One scroll loop driving mountains growth, background parallax, and scrubbed reveals ---------- */
+let skyProgress = 0;         // the value the sun/sky actually follow
+let skyTarget = 0;           // where the scroll says they should be
+let skyRAF = null;
+
+// Ease the sky toward the scroll target instead of snapping to it. This is
+// what gives the sun weight: when you land on a section it keeps drifting for
+// a moment and slows into place, rather than stopping dead with the scrollbar.
+function chaseSky(){
+  const diff = skyTarget - skyProgress;
+  if(Math.abs(diff) < 0.0004){
+    skyProgress = skyTarget;
+    paintSky(skyProgress);
+    skyRAF = null;
+    return;
+  }
+  skyProgress += diff * 0.08;   // approach rate — lower = more drift
+  paintSky(skyProgress);
+  skyRAF = requestAnimationFrame(chaseSky);
+}
+
 function onScrollFrame(){
   const vh = window.innerHeight;
 
@@ -1284,7 +1327,9 @@ function onScrollFrame(){
   const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0;
   mountains.style.height = (34 + progress * 30) + 'vh'; // 34vh at top -> 64vh at bottom
 
-  paintSky(progress); // day at the top of the page, night at the bottom
+  skyTarget = progress;
+  if(prefersReduced){ skyProgress = progress; paintSky(progress); }
+  else if(skyRAF === null){ skyRAF = requestAnimationFrame(chaseSky); }
 
   // Cards and headers scrub in as they cross the lower half of the viewport
   revealEls.forEach(el=>{
@@ -1302,6 +1347,7 @@ window.addEventListener('scroll', ()=>{
   if(!ticking){ requestAnimationFrame(onScrollFrame); ticking = true; }
 }, { passive:true });
 onScrollFrame();
+skyProgress = skyTarget; paintSky(skyProgress);
 
 /* ---------- Background music: your uploaded track, starts on first scroll/click/key ---------- */
 let isPlaying = false;
