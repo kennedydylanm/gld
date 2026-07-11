@@ -1147,6 +1147,92 @@ function playRandomSfx(){
 const NAV_H = 68;
 let slideFrame = null;
 
+/* ---------- Momentum ("floaty") scrolling ----------
+   The browser normally moves the page 1:1 with the wheel. Instead we catch the
+   wheel and touch deltas, add them to a target position, and each animation
+   frame glide the real scroll a fraction of the remaining distance. A flick
+   keeps coasting and eases to a stop — the heavy Animal-Crossing float. Clamp,
+   hysteresis, and an input-wins rule keep it from fighting the reader. */
+const FLOAT = {
+  ease: 0.075,      // fraction of the gap closed per frame — lower = more float
+  wheelMult: 1.0,   // how far one wheel notch pushes the target
+  touchMult: 1.5,   // touch drags feel better slightly amplified
+  maxStep: 140      // cap per-notch so a fast wheel can't launch across the page
+};
+let floatTarget = window.scrollY;
+let floatRAF = null;
+let floatActive = false;
+
+const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
+
+function floatStep(){
+  const gap = floatTarget - window.scrollY;
+  if(Math.abs(gap) <= 2){
+    window.scrollTo(0, Math.round(floatTarget));   // land exactly, incl. 0 / max
+    floatRAF = null; floatActive = false;
+    return;
+  }
+  // ensure the tail always closes: at least 1px toward the target per frame,
+  // otherwise ease*gap floors to 0 and it stalls a few pixels short
+  let step = gap * FLOAT.ease;
+  if(Math.abs(step) < 1) step = Math.sign(gap);
+  window.scrollTo(0, window.scrollY + step);
+  floatRAF = requestAnimationFrame(floatStep);
+}
+
+function floatBy(delta){
+  // start the target from the live position if we were idle, so it never
+  // "jumps ahead" after the reader has scrolled natively or resized
+  if(!floatActive) floatTarget = window.scrollY;
+  floatActive = true;
+  floatTarget = Math.max(0, Math.min(maxScroll(), floatTarget + delta));
+  if(floatRAF === null) floatRAF = requestAnimationFrame(floatStep);
+}
+
+if(!prefersReduced){
+  // WHEEL + trackpad. Trackpads fire many small deltaY events; the same
+  // accumulate-and-ease path handles both — a trackpad just feels lighter.
+  window.addEventListener('wheel', (e)=>{
+    if(e.ctrlKey) return;                 // let pinch-zoom through
+    e.preventDefault();
+    let d = e.deltaY;
+    if(e.deltaMode === 1) d *= 16;        // lines -> px
+    else if(e.deltaMode === 2) d *= window.innerHeight;  // pages -> px
+    d = Math.max(-FLOAT.maxStep, Math.min(FLOAT.maxStep, d)) * FLOAT.wheelMult;
+    floatBy(d);
+  }, { passive:false });
+
+  // TOUCH. Track finger movement; on release, coast with the last velocity.
+  let touchY = null, lastY = null, lastT = 0, vel = 0;
+  window.addEventListener('touchstart', (e)=>{
+    touchY = lastY = e.touches[0].clientY; lastT = performance.now(); vel = 0;
+    floatTarget = window.scrollY; floatActive = true;
+  }, { passive:true });
+  window.addEventListener('touchmove', (e)=>{
+    if(touchY === null) return;
+    const y = e.touches[0].clientY;
+    const dy = (lastY - y) * FLOAT.touchMult;
+    const now = performance.now(), dt = now - lastT || 16;
+    vel = dy / dt * 16;                    // px per frame, for the fling
+    floatBy(dy);
+    lastY = y; lastT = now;
+    e.preventDefault();
+  }, { passive:false });
+  window.addEventListener('touchend', ()=>{
+    touchY = null;
+    // fling: throw the target ahead by the release velocity, capped
+    const fling = Math.max(-900, Math.min(900, vel * 14));
+    if(Math.abs(fling) > 20) floatBy(fling);
+  }, { passive:true });
+
+  // Keep the target synced when the page moves by other means (keyboard,
+  // find-in-page, the nav slide, browser restore) so the next wheel tick
+  // doesn't yank back to a stale target.
+  window.addEventListener('scroll', ()=>{
+    if(!floatActive) floatTarget = window.scrollY;
+  }, { passive:true });
+}
+
 function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
 
 function slideTo(el){
@@ -1174,9 +1260,11 @@ function slideTo(el){
   function step(now){
     if(cancelled){ cleanup(); return; }
     const p = Math.min(1, (now - t0) / dur);
-    window.scrollTo(0, startY + (endY - startY) * easeInOutCubic(p));
+    const y = startY + (endY - startY) * easeInOutCubic(p);
+    window.scrollTo(0, y);
+    floatTarget = y;              // keep the momentum target in lockstep
     if(p < 1){ slideFrame = requestAnimationFrame(step); }
-    else { cleanup(); }
+    else { cleanup(); floatActive = false; }
   }
   slideFrame = requestAnimationFrame(step);
 }
