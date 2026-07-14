@@ -494,6 +494,9 @@ body{
 
 /* ---------- ABOUT PAGE ---------- */
 .about-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; margin-top:44px; align-items:start; }
+/* Raise the profile column so the photo's top lines up with the name heading
+   above the grid, rather than sitting level with the bio text. */
+.profile-col{ margin-top:-204px; }
 
 .philosophy{
   font-family:var(--display); font-style:normal; font-weight:500;
@@ -634,6 +637,7 @@ body{
 @media (max-width:820px){
   .page{ padding:50px 6vw 70px; }
   .about-grid, .contact-wrap{ grid-template-columns:1fr; }
+  .profile-col{ margin-top:0; }
   .insight-card, .lead-card, .project-card, .stat-panel{
     border-radius:38px 44px 40px 42px / 30px 27px 32px 29px;
     padding-left:24px; padding-right:24px;
