@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dylan "Mike" Kennedy | GLD Portfolio</title>
+<title>Dylan Kennedy | GLD Portfolio</title>
 <link rel="preload" href="fonts/bokutoh-eb.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 /* Rodin Bokutoh Pro EB, subset to the Latin glyphs this page uses.
@@ -467,17 +467,23 @@ body{
 .figure-float .figure-caption .edit{ background:#fff7e0; border-radius:4px; padding:1px 4px; }
 .insight-body, .lead-card{ overflow:hidden; }  /* contain the float */
 
-.involvement-note{
-  margin-top:26px; display:flex; gap:18px; align-items:center;
-  background:var(--bg-2); border:1px solid var(--mist); border-radius:18px; padding:16px 20px;
+.involvement-grid{
+  margin-top:26px; display:grid; grid-template-columns:1fr 1fr; gap:18px;
 }
-.involvement-note img{ width:74px; height:74px; border-radius:12px; object-fit:cover; flex-shrink:0; }
-.involvement-note p{ font-size:13px; line-height:1.7; color:var(--ink-soft); margin:0; }
+.involvement-note{
+  display:flex; flex-direction:column; gap:14px; align-items:flex-start;
+  background:var(--bg-2); border:1px solid var(--mist); border-radius:18px; padding:20px 22px;
+}
+.involvement-note img{ width:100%; height:150px; border-radius:14px; object-fit:cover; }
+.involvement-note h4{
+  font-family:var(--display); font-size:15px; color:var(--forest-deep); margin:0;
+}
+.involvement-note p{ font-size:13px; line-height:1.75; color:var(--ink-soft); margin:0; }
 .involvement-note strong{ color:var(--forest-deep); }
 
 @media (max-width:600px){
   .profile-photo{ float:none; display:block; width:200px; height:244px; margin:0 auto 22px; }
-  .involvement-note{ flex-direction:column; text-align:center; }
+  .involvement-grid{ grid-template-columns:1fr; }
 }
 
 /* ---------- ABOUT PAGE ---------- */
@@ -709,7 +715,7 @@ body{
     <section class="page" id="about">
       <div style="position:relative;">
         <div class="page-kicker anim-in">Graduation with Leadership Distinction</div>
-        <h1 class="page-title anim-in d1">Dylan &ldquo;Mike&rdquo; Kennedy<span class="accent">.</span></h1>
+        <h1 class="page-title anim-in d1">Dylan Kennedy<span class="accent">.</span></h1>
       </div>
       <p class="page-sub anim-in d1">Chemical engineering student using technical work to build systems that are better for the environment. Pathway of Distinction: <strong>Professional and Civic Engagement</strong>.</p>
 
@@ -717,7 +723,8 @@ body{
         <div>
           <img class="profile-photo anim-in d2" src="images/profile.jpg" alt="Dylan Kennedy">
           <p class="philosophy anim-in d2">
-            "Winning is not everything, but making the effort to win is." - Vince Lombardi
+            &ldquo;We can only see a short distance ahead, but we can see plenty there that needs to be
+            done.&rdquo; ~ <a href="https://en.wikipedia.org/wiki/Alan_Turing" target="_blank" rel="noopener">Alan Turing</a>
           </p>
           <p class="bio-text anim-in d3">
             I'm a Chemical Engineering student in the Honors College at the University of South Carolina,
@@ -738,18 +745,6 @@ body{
             that are genuinely better for the environment, and getting the people around them to buy in.
           </p>
 
-          <div class="involvement-note anim-in d4">
-            <img src="images/kkpsi.jpg" alt="Kappa Kappa Psi brothers">
-            <p><strong>Outside the coursework,</strong> a lot of what keeps me grounded in this work
-              happens outdoors. I'm a member of the Mountaineering and Whitewater Rafting Club, where we
-              hike, climb, and get out on the water, and where practicing Leave No Trace is just how things
-              are done: you carry out everything you carry in, and you measure a good trip partly by how
-              little sign you left behind. That habit of minimizing your footprint on a place you care about
-              is the same instinct that pulls me toward environmental engineering, just at a different
-              scale. I'm also an active brother in Kappa Kappa Psi, the national honorary band fraternity,
-              where I've supported the university band program through service and mentoring, and learned a
-              lot about how you actually earn trust and influence as a leader.</p>
-          </div>
         </div>
 
         <div class="stat-panel anim-in d3">
@@ -757,9 +752,29 @@ body{
           <div class="stat-row"><span class="stat-label">Major</span><span class="stat-value">B.S. Chemical Engineering</span></div>
           <div class="stat-row"><span class="stat-label">Graduation</span><span class="stat-value">May 2027</span></div>
           <div class="stat-row"><span class="stat-label">GPA</span><span class="stat-value">3.86</span></div>
-          <div class="stat-row"><span class="stat-label">Leadership Role</span><span class="stat-value">VP, AIChE</span></div>
         </div>
       </div>
+
+          <div class="involvement-grid">
+            <div class="involvement-note anim-in d4">
+              <img src="images/mww-hike.jpg" alt="Dylan sitting on a rock in front of a waterfall on a hike to Looking Glass Falls with the Mountaineering and Whitewater Rafting Club">
+              <h4>Mountaineering &amp; Whitewater Rafting Club</h4>
+              <p>A lot of what keeps me grounded in this work happens outdoors. We hike, climb, and get out
+                on the water, and practicing Leave No Trace is just how things are done: you carry out
+                everything you carry in, and you measure a good trip partly by how little sign you left
+                behind. That habit of minimizing your footprint on a place you care about is the same
+                instinct that pulls me toward environmental engineering, just at a different scale.</p>
+            </div>
+            <div class="involvement-note anim-in d4">
+              <img src="images/kkpsi.jpg" alt="Kappa Kappa Psi brothers">
+              <h4>Kappa Kappa Psi</h4>
+              <p>I'm an active brother in Kappa Kappa Psi, the national honorary band fraternity, where I've
+                supported the university band program through service projects and mentoring new members.
+                It's taught me a lot about how you actually earn trust and influence as a leader, the kind
+                that comes from showing up consistently rather than from a title.</p>
+            </div>
+          </div>
+
     </section>
 
     <!-- ================= KEY INSIGHTS ================= -->
@@ -1080,7 +1095,7 @@ body{
           <a class="contact-link" href="mailto:kennedydylanm@gmail.com">Email <span class="arrow">→</span></a>
           <a class="contact-link" href="https://linkedin.com/in/kennedydylanm" target="_blank" rel="noopener">LinkedIn <span class="arrow">→</span></a>
           <!-- EDIT: link this to your actual resume PDF once you upload it -->
-          <a class="contact-link" href="#" target="_blank" rel="noopener">Resume (PDF) <span class="arrow">→</span></a>
+          <a class="contact-link" href="files/Dylan_Kennedy_Resume.pdf" target="_blank" rel="noopener">Resume (PDF) <span class="arrow">→</span></a>
         </div>
         <div class="contact-note reveal">
           <strong>Open to</strong><br>
