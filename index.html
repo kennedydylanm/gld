@@ -6,9 +6,8 @@
 <title>Dylan Kennedy | GLD Portfolio</title>
 <link rel="preload" href="fonts/bokutoh-eb.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-/* Rodin Bokutoh Pro EB, subset to the Latin glyphs this page uses.
-   The weight range keeps browsers from faking a bolder cut — the face
-   is already Extra Bold, and synthetic bold on it turns to mud. */
+/* Rodin Bokutoh Pro EB */
+   
 @font-face{
   font-family:'Bokutoh';
   src:url('fonts/bokutoh-eb.woff2') format('woff2'),
@@ -17,18 +16,15 @@
   font-style:normal;
   font-display:swap;
 }
-/* ============================================================
-   EDIT ME: search for "EDIT:" comments to find every spot
-   where you should swap in your real name/content/links.
-   ============================================================ */
+
 
 :root{
   --bg:#eef3e6;
-  --bg-2:#fffae4;      /* dialogue paper */
+  --bg-2:#fffae4;      
   --paper:#fffae4;
-  --ink:#74664b;       /* dialogue text */
-  --ink-soft:#8f8168;  /* same hue, lifted for secondary copy */
-  --tag:#e86e88;       /* speaker name tag */
+  --ink:#74664b;       
+  --ink-soft:#8f8168;  
+  --tag:#e86e88;       
   --tag-deep:#d15676;
   --blob:64px 74px 68px 70px / 46px 42px 50px 44px;
   --forest:#5b7d52;
@@ -38,7 +34,7 @@
   --mist-2:#dfe8d3;
   --creme:#f7efdf;
 
-  /* Driven by scroll position in JS — see paintSky(). Defaults are midday. */
+ 
   --sky-1:#6fb6e6; --sky-2:#a9dcef; --sky-3:#d6ecf6;
   --hill-far:#d2e2c6; --hill-mid:#b0cd99; --grass:#9ac47f;
   --star-a:0;
@@ -51,7 +47,7 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:auto;} /* JS drives the eased section slide */
+html{scroll-behavior:auto;} 
 
 body{
   background:linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 44%, var(--sky-3) 100%);
@@ -65,12 +61,7 @@ body{
   position:relative;
 }
 
-/* ============================================================
-   THE ISLAND
-   A curved horizon (the ground is a very wide ellipse, so it falls
-   away at the edges the way a small round world does), rolling hills
-   behind it, and a sky that tracks the visitor's actual clock.
-   ============================================================ */
+
 .world{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
 
 .stars{
@@ -131,7 +122,7 @@ body{
 }
 @keyframes twinkle{ from{ opacity:0.15; } to{ opacity:0.7; } }
 
-/* sun by day, moon by night — same element, walked along an arc */
+
 .celestial{
   position:absolute;
   left:var(--cel-x); top:var(--cel-y);
@@ -149,12 +140,7 @@ body{
   z-index:0;
   pointer-events:none;
 }
-/* Animal Crossing hills read as fat, soft mounds stacked in gentle layers. Each
-   blob is a wide ellipse rooted well below the horizon so only its rounded top
-   shows; heavy overlap fuses them into one undulating ridge rather than a row
-   of circles. A thin lighter band sits just under each crest as the lit rim of
-   grass — a top-anchored radial, so it hugs the crest instead of ringing the
-   whole shape the way an inset shadow would. */
+
 .hill{ position:absolute; left:0; right:0; bottom:0; }
 .hill span{
   position:absolute; bottom:0; display:block;
@@ -174,9 +160,7 @@ body{
 .hill.mid .a{ left:-12%;  width:82%;  height:160%; }
 .hill.mid .b{ right:-14%; width:86%;  height:186%; }
 
-/* The lawn. Two 45-degree stripe sets cross into the soft diamond
-   lattice the games use for grass; the inset highlight is the lip of
-   the turf catching light at the horizon. */
+
 .ground{
   position:absolute; bottom:0; left:50%; transform:translateX(-50%);
   width:250vw; height:47%;
@@ -189,7 +173,7 @@ body{
 }
 .mountains svg{ width:100%; height:100%; display:block; }
 
-/* ---------- SKY: CLOUDS + BIRDS (independent drift speeds) ---------- */
+
 .sky{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
 
 .cloud{ position:absolute; opacity:0.65; will-change:transform; animation:drift-cloud linear infinite; }
@@ -286,13 +270,11 @@ body{
   color:var(--ink-soft); opacity:0.6;
 }
 
-/* ---------- IRIS WIPE: black closes in on the sign, then opens on the page ---------- */
+
 .iris{
   position:fixed; top:50%; left:50%;
   width:0; height:0; border-radius:50%;
-  /* The ring is what you actually see. Its spread stays constant, so the
-     hole can shrink to nothing and still leave a fully black screen —
-     scaling the element instead would shrink the ring away with it. */
+
   box-shadow:0 0 0 100vmax #000;
   transform:translate(-50%,-50%);
   z-index:400; display:none; pointer-events:none;
@@ -373,10 +355,7 @@ body{
 .page{ padding:100px 8vw 90px; position:relative; scroll-margin-top:68px; border-bottom:1px dashed var(--mist); }
 .page:last-of-type{ border-bottom:none; }
 
-/* Anything not inside a dialogue box reads against the sky AND scrolls over
-   the grass, where brown-on-green falls to about 1.8:1. So this text carries
-   a real outline rather than a soft glow — the trick the games use for their
-   own UI. The outline flips dark at night, when the text turns cream. */
+
 .page-title, .page-kicker, .page-sub, .bio-text, .philosophy,
 .involvement-note, .contact-link, .contact-note{
   text-shadow:
@@ -387,7 +366,7 @@ body{
      0 3px 16px rgba(12,24,56, var(--halo-dark));
   transition:color 2s linear, text-shadow 2s linear;
 }
-/* display sizes take a heavier outline so it stays proportional */
+
 .page-title{
   text-shadow:
     -2px -2px 0 var(--outline),  2px -2px 0 var(--outline),
@@ -438,10 +417,7 @@ body{
   padding:10px 4px 0; line-height:1.6;
 }
 
-/* In the write-up sections (Key Insights + Leadership) the photo is small and
-   floats right so the prose wraps around it. Photo and caption sit together in
-   a tinted rounded card — a distinct surface from the cream dialogue box, with
-   its own smaller, green caption type so it reads as a separate object. */
+
 .figure-float{
   float:right; width:294px; max-width:44%;
   margin:6px 0 18px 30px;
@@ -492,10 +468,9 @@ body{
   .involvement-note img{ width:110px; }
 }
 
-/* ---------- ABOUT PAGE ---------- */
+/* ABOUT PAGE */
 .about-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; margin-top:44px; align-items:start; }
-/* Raise the profile column so the photo's top lines up with the name heading
-   above the grid, rather than sitting level with the bio text. */
+
 .profile-col{ margin-top:-204px; }
 
 .philosophy{
@@ -517,19 +492,10 @@ body{
 .stat-label{ font-weight:700; font-size:12px; letter-spacing:0.06em; color:var(--ink-soft); text-transform:uppercase; }
 .stat-value{ font-family:var(--display); font-weight:600; font-size:18px; color:var(--forest-deep); text-align:right; }
 
-/* ---------- KEY INSIGHTS PAGE ---------- */
+/* KEY INSIGHTS PAGE */
 .insight-list{ margin-top:40px; display:flex; flex-direction:column; gap:30px; }
 
-/* ============================================================
-   DIALOGUE BOXES
-   Soft cream blobs with a speaker tag clipped to the top-left,
-   after the Animal Crossing dialogue window. The corner radii are
-   deliberately unequal so the shape reads hand-drawn rather than
-   like a rounded rectangle.
-   ============================================================ */
-/* text-shadow and color both inherit. A dialogue box is its own lit surface,
-   so the sky's outline stops at its edge — on the pink name tags that outline
-   was thickening the letterforms until they closed up. */
+
 .insight-card, .lead-card, .project-card, .stat-panel,
 .insight-card *, .lead-card *, .project-card *, .stat-panel *{
   text-shadow:none;
