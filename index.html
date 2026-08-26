@@ -514,7 +514,7 @@ body{
   box-shadow:0 22px 42px rgba(61,90,58,0.18);
 }
 
-/* the speaker tag: each card's own label, lifted out of the flow */
+
 .insight-num,
 .project-year,
 .lead-card h3,
@@ -558,7 +558,7 @@ body{
 .artifact-box .label{ font-weight:800; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--forest); display:block; margin-bottom:8px; }
 .artifact-box ul{ margin:0; padding-left:20px; font-size:13.5px; color:var(--ink-soft); line-height:1.8; }
 
-/* ---------- LEADERSHIP PAGE ---------- */
+/* LEADERSHIP PAGE */
 .lead-block{ margin-top:40px; display:flex; flex-direction:column; gap:26px; }
 .lead-card{
   border-radius:72px 62px 74px 66px / 44px 50px 46px 48px;
@@ -571,7 +571,7 @@ body{
 .plan-table th{ text-align:left; font-family:var(--body); font-weight:800; color:var(--forest-deep); padding:10px 12px; border-bottom:2px solid var(--mist); text-transform:uppercase; font-size:11px; letter-spacing:0.05em; }
 .plan-table td{ padding:12px; border-bottom:1px dashed var(--mist); color:var(--ink-soft); vertical-align:top; }
 
-/* ---------- PROJECTS PAGE ---------- */
+/* PROJECTS PAGE */
 .project-grid{ margin-top:40px; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:26px; }
 .project-card{
   border-radius:60px 70px 64px 74px / 46px 42px 48px 44px;
@@ -622,10 +622,10 @@ body{
 @keyframes riseIn{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
 .d1{animation-delay:.05s;} .d2{animation-delay:.14s;} .d3{animation-delay:.22s;} .d3b{animation-delay:.26s;} .d4{animation-delay:.3s;}
 
-/* ---------- SCROLL REVEAL (continuous, scrubbed by scroll position) ---------- */
+/* SCROLL REVEAL */
 .reveal{ opacity:0; transform:translateY(28px) scale(0.97); transition:opacity .12s linear, transform .12s linear; will-change:opacity, transform; }
 
-/* ---------- HERO FLOURISH ---------- */
+
 
 :focus-visible{ outline:2px solid var(--forest); outline-offset:3px; }
 @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.01ms !important; } }
@@ -687,7 +687,7 @@ body{
 
 <main class="main">
 
-    <!-- ================= ABOUT ME ================= -->
+    <!-- ABOUT ME -->
     <section class="page" id="about">
       <div style="position:relative;">
         <div class="page-kicker anim-in">Graduation with Leadership Distinction</div>
@@ -759,7 +759,7 @@ body{
 
     </section>
 
-    <!-- ================= KEY INSIGHTS ================= -->
+    <!-- KEY INSIGHTS -->
     <section class="page" id="insights">
       <div class="page-kicker reveal">What I Learned</div>
       <h1 class="page-title reveal">Key <span class="accent">Insights</span></h1>
@@ -891,7 +891,7 @@ body{
       </div>
     </section>
 
-    <!-- ================= LEADERSHIP ================= -->
+    <!-- LEADERSHIP -->
     <section class="page" id="leadership">
       <div class="page-kicker reveal">Applying What I've Learned</div>
       <h1 class="page-title reveal">Leadership <span class="accent">Plan</span></h1>
@@ -989,7 +989,7 @@ body{
       </div>
     </section>
 
-    <!-- ================= PROJECTS ================= -->
+    <!-- PROJECTS -->
     <section class="page" id="projects">
       <div class="page-kicker reveal">A Living Portfolio</div>
       <h1 class="page-title reveal">Selected <span class="accent">Projects</span></h1>
@@ -1067,7 +1067,7 @@ body{
       </div>
     </section>
 
-    <!-- ================= CONTACT ================= -->
+    <!-- CONTACT -->
     <section class="page" id="contact">
       <div class="page-kicker reveal">Get In Touch</div>
       <h1 class="page-title reveal">Let's <span class="accent">Talk</span></h1>
@@ -1076,7 +1076,7 @@ body{
         <div class="contact-links reveal">
           <a class="contact-link" href="mailto:kennedydylanm@gmail.com">Email <span class="arrow">→</span></a>
           <a class="contact-link" href="https://linkedin.com/in/kennedydylanm" target="_blank" rel="noopener">LinkedIn <span class="arrow">→</span></a>
-          <!-- EDIT: link this to your actual resume PDF once you upload it -->
+          <!-- EDIT: link to resume after updating for career fair -->
           <a class="contact-link" href="files/Dylan_Kennedy_Resume.pdf" target="_blank" rel="noopener">Resume (PDF) <span class="arrow">→</span></a>
         </div>
         <div class="contact-note reveal">
@@ -1086,6 +1086,7 @@ body{
           &nbsp;&nbsp;collaboration<br><br>
           <strong>Response time</strong><br>
           &nbsp;&nbsp;within 48 hours
+           <!-- EDIT: these are kind of corny, fix later -->
         </div>
       </div>
     </section>
@@ -1110,7 +1111,7 @@ const spyObserver = new IntersectionObserver((entries)=>{
 
 sections.forEach(sec => spyObserver.observe(sec));
 
-/* ---------- Interactive click sounds: random pick from the licensed SFX pack ---------- */
+/* Interactive click sounds */
 const sfxFiles = [
   'audio/sfx/Manpu_16_A.wav',
   'audio/sfx/Manpu_23_Hatena.wav',
@@ -1132,8 +1133,7 @@ function playRandomSfx(){
   if(sfxPool.length === 1){
     i = 0;
   }else{
-    // pick uniformly from every clip EXCEPT the one just played, so it's still
-    // random but never fires the same sound twice in a row
+  
     i = Math.floor(Math.random() * (sfxPool.length - 1));
     if(i >= lastSfx) i++;
   }
@@ -1141,25 +1141,19 @@ function playRandomSfx(){
   const el = sfxPool[i];
   try{
     el.currentTime = 0;
-    el.play().catch(()=>{ /* ignore if blocked before first gesture */ });
+    el.play().catch(()=>{ /* ignore if blocked before first input */ });
   }catch(e){ /* fail quietly */ }
 }
 
-/* ---------- Eased slide between sections (replaces the leaf wipe) ---------- */
 const NAV_H = 68;
 let slideFrame = null;
 
-/* ---------- Momentum ("floaty") scrolling ----------
-   The browser normally moves the page 1:1 with the wheel. Instead we catch the
-   wheel and touch deltas, add them to a target position, and each animation
-   frame glide the real scroll a fraction of the remaining distance. A flick
-   keeps coasting and eases to a stop — the heavy Animal-Crossing float. Clamp,
-   hysteresis, and an input-wins rule keep it from fighting the reader. */
+
 const FLOAT = {
-  ease: 0.075,      // fraction of the gap closed per frame — lower = more float
-  wheelMult: 1.0,   // how far one wheel notch pushes the target
-  touchMult: 1.5,   // touch drags feel better slightly amplified
-  maxStep: 140      // cap per-notch so a fast wheel can't launch across the page
+  ease: 0.075,      
+  wheelMult: 1.0,   
+  touchMult: 1.5,   
+  maxStep: 140      
 };
 let floatTarget = window.scrollY;
 let floatRAF = null;
@@ -1170,12 +1164,11 @@ const maxScroll = () => document.documentElement.scrollHeight - window.innerHeig
 function floatStep(){
   const gap = floatTarget - window.scrollY;
   if(Math.abs(gap) <= 2){
-    window.scrollTo(0, Math.round(floatTarget));   // land exactly, incl. 0 / max
+    window.scrollTo(0, Math.round(floatTarget));   
     floatRAF = null; floatActive = false;
     return;
   }
-  // ensure the tail always closes: at least 1px toward the target per frame,
-  // otherwise ease*gap floors to 0 and it stalls a few pixels short
+  
   let step = gap * FLOAT.ease;
   if(Math.abs(step) < 1) step = Math.sign(gap);
   window.scrollTo(0, window.scrollY + step);
@@ -1183,8 +1176,7 @@ function floatStep(){
 }
 
 function floatBy(delta){
-  // start the target from the live position if we were idle, so it never
-  // "jumps ahead" after the reader has scrolled natively or resized
+
   if(!floatActive) floatTarget = window.scrollY;
   floatActive = true;
   floatTarget = Math.max(0, Math.min(maxScroll(), floatTarget + delta));
@@ -1192,19 +1184,18 @@ function floatBy(delta){
 }
 
 if(!prefersReduced){
-  // WHEEL + trackpad. Trackpads fire many small deltaY events; the same
-  // accumulate-and-ease path handles both — a trackpad just feels lighter.
+  
   window.addEventListener('wheel', (e)=>{
-    if(e.ctrlKey) return;                 // let pinch-zoom through
+    if(e.ctrlKey) return;                 
     e.preventDefault();
     let d = e.deltaY;
-    if(e.deltaMode === 1) d *= 16;        // lines -> px
-    else if(e.deltaMode === 2) d *= window.innerHeight;  // pages -> px
+    if(e.deltaMode === 1) d *= 16;        
+    else if(e.deltaMode === 2) d *= window.innerHeight;  
     d = Math.max(-FLOAT.maxStep, Math.min(FLOAT.maxStep, d)) * FLOAT.wheelMult;
     floatBy(d);
   }, { passive:false });
 
-  // TOUCH. Track finger movement; on release, coast with the last velocity.
+  
   let touchY = null, lastY = null, lastT = 0, vel = 0;
   window.addEventListener('touchstart', (e)=>{
     touchY = lastY = e.touches[0].clientY; lastT = performance.now(); vel = 0;
@@ -1215,21 +1206,19 @@ if(!prefersReduced){
     const y = e.touches[0].clientY;
     const dy = (lastY - y) * FLOAT.touchMult;
     const now = performance.now(), dt = now - lastT || 16;
-    vel = dy / dt * 16;                    // px per frame, for the fling
+    vel = dy / dt * 16;                    
     floatBy(dy);
     lastY = y; lastT = now;
     e.preventDefault();
   }, { passive:false });
   window.addEventListener('touchend', ()=>{
     touchY = null;
-    // fling: throw the target ahead by the release velocity, capped
+   
     const fling = Math.max(-900, Math.min(900, vel * 14));
     if(Math.abs(fling) > 20) floatBy(fling);
   }, { passive:true });
 
-  // Keep the target synced when the page moves by other means (keyboard,
-  // find-in-page, the nav slide, browser restore) so the next wheel tick
-  // doesn't yank back to a stale target.
+
   window.addEventListener('scroll', ()=>{
     if(!floatActive) floatTarget = window.scrollY;
   }, { passive:true });
@@ -1244,12 +1233,10 @@ function slideTo(el){
   const dist = Math.abs(endY - startY);
   if(prefersReduced || dist < 2){ window.scrollTo(0, endY); return; }
 
-  // Longer trips take longer, but never so long that the page feels stuck.
   const dur = Math.min(1250, Math.max(650, dist * 0.55));
   const t0 = performance.now();
   if(slideFrame) cancelAnimationFrame(slideFrame);
 
-  // Any real scroll input from the user wins over the animation.
   let cancelled = false;
   const abort = ()=>{ cancelled = true; };
   window.addEventListener('wheel', abort, { passive:true });
@@ -1264,7 +1251,7 @@ function slideTo(el){
     const p = Math.min(1, (now - t0) / dur);
     const y = startY + (endY - startY) * easeInOutCubic(p);
     window.scrollTo(0, y);
-    floatTarget = y;              // keep the momentum target in lockstep
+    floatTarget = y;              
     if(p < 1){ slideFrame = requestAnimationFrame(step); }
     else { cleanup(); floatActive = false; }
   }
@@ -1281,7 +1268,7 @@ navItems.forEach(item=>{
   });
 });
 
-// the wordmark and any other in-page anchor ride the same slide
+
 document.querySelectorAll('a[href^="#"]:not(.nav-item)').forEach(link=>{
   link.addEventListener('click', (e)=>{
     const target = document.querySelector(link.getAttribute('href'));
@@ -1295,10 +1282,7 @@ document.querySelectorAll('.contact-link').forEach(link=>{
   link.addEventListener('click', ()=>{ playRandomSfx(); });
 });
 
-/* ---------- The sun sets as you scroll ----------
-   Each stop is a point in the scroll (0 = top of the page, 1 = bottom) and
-   the full set of colours the world wears there. Everything between stops is
-   interpolated, so the light slides continuously rather than stepping. */
+
 const SKY_STOPS = [
   { p:0.00, sky1:'#6fb6e6', sky2:'#a9dcef', sky3:'#d6ecf6',
             far:'#d2e2c6', mid:'#b0cd99', grass:'#9ac47f',
@@ -1317,11 +1301,7 @@ const SKY_STOPS = [
             star:1.00, cel:'#f3f1d8', glow:'rgba(243,241,216,0.30)' }
 ];
 
-/* Text sitting on the sky can't lerp its colour along with the scene: through
-   the sunset the ink and its outline would both pass the same mid-tone and
-   cancel out (measured 1.03:1 on an earlier build — invisible). So the scene
-   fades continuously while the ink flips as a pair, once, when the scene it
-   sits on gets dark. CSS transitions the flip over two seconds. */
+
 const DAY_INK   = { ink:'#74664b', soft:'#8f8168', accent:'#5b7d52',
                     out:'rgba(255,250,228,0.94)', hd:0 };
 const NIGHT_INK = { ink:'#fff6dd', soft:'#ded3b6', accent:'#b6dea6',
@@ -1366,11 +1346,10 @@ function paintSky(p){
   r.setProperty('--cel-color', mixHex(a.cel, b.cel, t));
   r.setProperty('--cel-glow', mixRgba(a.glow, b.glow, t));
 
-  // how bright is what the text actually sits on? sky above, grass below
   const scene = (relLum(sky2) + relLum(grass)) / 2;
-  if (isNight === null) isNight = scene < 0.32;       // first paint
-  else if (isNight && scene > 0.34) isNight = false;  // hysteresis, so scrubbing
-  else if (!isNight && scene < 0.30) isNight = true;  // the threshold can't flicker
+  if (isNight === null) isNight = scene < 0.32;       
+  else if (isNight && scene > 0.34) isNight = false;  
+  else if (!isNight && scene < 0.30) isNight = true;  
 
   const P = isNight ? NIGHT_INK : DAY_INK;
   r.setProperty('--sky-ink', P.ink);
@@ -1379,23 +1358,17 @@ function paintSky(p){
   r.setProperty('--outline', P.out);
   r.setProperty('--halo-dark', String(P.hd));
 
-  // The sun tracks west and drops. Its travel is eased, not linear, so it
-  // crawls at the top of a scroll, accelerates through the middle, then
-  // settles slowly into the horizon — a slow-fast-slow arc. Past the horizon
-  // the hills paint over the sky and hide it, so it sets on its own.
+
   const e = p < 0.5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2;  // easeInOutCubic
   r.setProperty('--cel-x', (24 + e * 60).toFixed(1) + '%');
   r.setProperty('--cel-y', (12 + e * 92).toFixed(1) + '%');
 }
 
-/* ---------- One scroll loop driving mountains growth, background parallax, and scrubbed reveals ---------- */
-let skyProgress = 0;         // the value the sun/sky actually follow
-let skyTarget = 0;           // where the scroll says they should be
+let skyProgress = 0;         
+let skyTarget = 0;           
 let skyRAF = null;
 
-// Ease the sky toward the scroll target instead of snapping to it. This is
-// what gives the sun weight: when you land on a section it keeps drifting for
-// a moment and slows into place, rather than stopping dead with the scrollbar.
+
 function chaseSky(){
   const diff = skyTarget - skyProgress;
   if(Math.abs(diff) < 0.0004){
@@ -1404,7 +1377,7 @@ function chaseSky(){
     skyRAF = null;
     return;
   }
-  skyProgress += diff * 0.08;   // approach rate — lower = more drift
+  skyProgress += diff * 0.08;   
   paintSky(skyProgress);
   skyRAF = requestAnimationFrame(chaseSky);
 }
@@ -1412,16 +1385,14 @@ function chaseSky(){
 function onScrollFrame(){
   const vh = window.innerHeight;
 
-  // Mountains grow taller as you scroll down the page
   const scrollable = document.documentElement.scrollHeight - vh;
   const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0;
-  mountains.style.height = (34 + progress * 30) + 'vh'; // 34vh at top -> 64vh at bottom
+  mountains.style.height = (34 + progress * 30) + 'vh'; 
 
   skyTarget = progress;
   if(prefersReduced){ skyProgress = progress; paintSky(progress); }
   else if(skyRAF === null){ skyRAF = requestAnimationFrame(chaseSky); }
 
-  // Cards and headers scrub in as they cross the lower half of the viewport
   revealEls.forEach(el=>{
     const rect = el.getBoundingClientRect();
     let p = (vh * 0.9 - rect.top) / (vh * 0.55);
@@ -1439,14 +1410,11 @@ window.addEventListener('scroll', ()=>{
 onScrollFrame();
 skyProgress = skyTarget; paintSky(skyProgress);
 
-/* ---------- Background music: your uploaded track, starts on first scroll/click/key ---------- */
 let isPlaying = false;
 const bgMusic = document.getElementById('bg-music');
 if(bgMusic) bgMusic.volume = 0.35;
 
-// Only treated as "playing" once playback genuinely starts — a play()
-// attempt from a non-qualifying event (like scroll) can silently reject,
-// and we don't want that to look like success.
+
 function tryPlay(){
   if(!bgMusic || isPlaying) return;
   bgMusic.play().then(()=>{
@@ -1462,7 +1430,7 @@ function stopAmbience(){
 }
 
 const soundToggle = document.querySelector('.sound-toggle');
-let wantsSound = true; // defaulted on; actual playback still needs a first user gesture (browser rule)
+let wantsSound = true; 
 
 if(soundToggle){
   soundToggle.addEventListener('click', ()=>{
@@ -1478,19 +1446,14 @@ if(soundToggle){
   });
 }
 
-// Music is unlocked exclusively by the sign click (see the welcome handler
-// below), so the theme starts in sync with the iris transition rather than on
-// some earlier stray interaction. If the reader muted and later un-mutes, the
-// sound toggle re-starts it; nothing else auto-starts audio.
-/* ---------- Welcome screen: doubles as the required user gesture to unlock audio ---------- */
+
 document.body.style.overflow = 'hidden';
 const welcomeOverlay = document.getElementById('welcome-overlay');
 const welcomeBtn = document.getElementById('welcome-btn');
 const signWrap = document.getElementById('sign-wrap');
 let welcomeDone = false;
 
-// Wide enough that the hole's edge clears the viewport corners, so the
-// black ring sits entirely offscreen when the iris is open.
+
 function irisOpenSize(){
   return Math.hypot(window.innerWidth, window.innerHeight) + 80;
 }
@@ -1501,23 +1464,20 @@ const CLOSE_MS = 780, HOLD_MS = 170, OPEN_MS = 900;
 function runIris(cx, cy, atBlack){
   const D = irisOpenSize();
 
-  // start wide open, centred on the sign, with no transition running
   iris.style.left = cx + 'px';
   iris.style.top  = cy + 'px';
   iris.classList.remove('animate');
   setIris(D);
   iris.classList.add('active');
-  void iris.offsetWidth;                       // commit that state before animating
+  void iris.offsetWidth;                       
 
-  // squeeze shut around the sign
   iris.style.setProperty('--iris-dur', CLOSE_MS + 'ms');
   iris.classList.add('animate');
   setIris(0);
 
   setTimeout(()=>{
-    atBlack();                                 // swap the page in while nothing shows
+    atBlack();                                 
 
-    // re-centre on the viewport and bloom back open
     iris.classList.remove('animate');
     iris.style.left = '50%';
     iris.style.top  = '50%';
@@ -1537,8 +1497,7 @@ function revealSite(){
   onScrollFrame();
 }
 
-// Read the sign PNG's alpha into an offscreen canvas once, so a click can be
-// tested against the actual wood shape instead of the button's rectangle.
+
 const signImg = welcomeBtn ? welcomeBtn.querySelector('img') : null;
 let signAlpha = null, signAW = 0, signAH = 0;
 function buildSignMask(){
@@ -1549,15 +1508,14 @@ function buildSignMask(){
   const ctx = c.getContext('2d', { willReadFrequently:true });
   ctx.drawImage(signImg, 0, 0);
   try{ signAlpha = ctx.getImageData(0, 0, signAW, signAH).data; }
-  catch(e){ signAlpha = null; }   // if ever tainted, fall back to whole button
+  catch(e){ signAlpha = null; }   
 }
 if(signImg){
   if(signImg.complete) buildSignMask();
   else signImg.addEventListener('load', buildSignMask);
 }
-// true only if the click landed on an opaque (wood) pixel of the sign
 function clickHitWood(ev){
-  if(!signAlpha) return true;     // mask unavailable -> don't block the click
+  if(!signAlpha) return true;     
   const r = signImg.getBoundingClientRect();
   if(r.width === 0 || r.height === 0) return true;
   const px = Math.floor((ev.clientX - r.left) / r.width  * signAW);
@@ -1569,7 +1527,7 @@ function clickHitWood(ev){
 if(welcomeBtn){
   welcomeBtn.addEventListener('click', (ev)=>{
     if(welcomeDone) return;
-    if(!clickHitWood(ev)) return;   // ignore clicks on the transparent corners
+    if(!clickHitWood(ev)) return;   
     welcomeDone = true;
 
     playRandomSfx();
