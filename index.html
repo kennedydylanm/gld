@@ -444,6 +444,29 @@ body{
 .figure-float .figure-caption .edit{ background:#fff7e0; border-radius:4px; padding:1px 4px; }
 .insight-body, .lead-card{ overflow:hidden; }  /* contain the float */
 
+/* ---- Artifact block inside a Key Insight ---- */
+.artifact-block{
+  margin-top:22px; padding-top:18px;
+  border-top:1px dashed rgba(116,102,75,0.3);
+}
+.artifact-heading{
+  font-family:var(--display); font-size:12px; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--forest-deep); margin:0 0 12px;
+}
+.artifact{ margin-bottom:14px; }
+.artifact:last-child{ margin-bottom:0; }
+.artifact-tag{
+  display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.05em;
+  text-transform:uppercase; padding:3px 9px; border-radius:999px;
+  margin-bottom:6px; border:1.5px solid transparent;
+}
+.artifact-tag.wtc{ background:#e7eddb; color:#5b7d52; border-color:#cdd9bd; }
+.artifact-tag.btc{ background:#f6e6ce; color:#a07a3c; border-color:#e6d2a6; }
+.artifact p{ font-size:13px; line-height:1.7; color:var(--ink-soft); margin:0; }
+.artifact a{ color:var(--forest-deep); text-decoration:none; border-bottom:1px solid rgba(91,125,82,0.4); }
+.artifact a:hover{ border-bottom-color:var(--forest); }
+
+
 .involvement-grid{
   margin-top:26px; display:grid; grid-template-columns:1fr 1fr; gap:18px;
 }
@@ -782,30 +805,67 @@ body{
               <div class="figure-img"><img src="images/chemecube.jpg" alt="Vitamin Cube team at the AIChE Annual Student Conference"></div>
               <p class="figure-caption">Our Vitamin Cube team after the pitch at the AIChE Annual Student Conference, the ExxonMobil-sponsored ChemE Cube competition. This is the carbon-capture project that placed 2nd internationally.</p>
             </div>
-            <p>SPCH 140 taught me something that sounded obvious until I had to do it under pressure: the
-              same idea has to be reshaped, not just repeated, depending on who is listening. Audience
-              analysis, figuring out what a specific group actually cares about and speaking to that, felt
-              like a tidy communication concept at the time. It turned out to be the thing that decided
-              whether my environmental work went anywhere.</p>
-            <p>It got real at the AIChE Annual Student Conference, where I represented two projects in the
-              same week, both of them environmental, both needing completely different pitches. On the
-              Vitamin Cube team I helped research a Solid Direct Air Capture additive, pyrolyzed mandarin
-              peels treated with KOH that captured 6 wt.% CO2, and then pitched the process and its business
-              case to a panel of judges acting as investors. For the ChemE Car project we had reverse
-              engineered how a hydrogen fuel cell could power a car motor, and I presented that design to a
-              panel of practicing engineers. The carbon-capture judges wanted to know if the idea could
-              scale and pay for itself. The fuel-cell judges wanted to know if the engineering was sound.
-              Same week, same person, two almost opposite conversations.</p>
-            <p>Preparing both at once forced me to actually use what SPCH 140 had only let me theorize. A
-              carbon-capture additive and a hydrogen-powered motor are only as good as someone's willingness
-              to fund or trust them, and that willingness lives entirely in how you frame the work. The
-              Vitamin Cube pitch placed 2nd internationally, which told me the reframing held up under real
-              scrutiny.</p>
-            <p>That is the lesson I keep coming back to. The climate problems I want to work on are full of
-              technically sound ideas that never get adopted, and a big reason is that engineers are trained
-              to prove things are correct, not to make people care about them. I've decided those are two
-              different skills, and I want to be good at both, because a solution nobody buys into doesn't
-              actually reduce any emissions.</p>
+            <p>The connecting idea for this insight is simple, and it took me a while to really believe
+              it: a good environmental solution is only as strong as your ability to make the right person
+              care about it. SPCH 140 gave me the concept behind that. The course centered on audience
+              analysis, figuring out what a specific group actually values and shaping your argument around
+              that instead of just presenting what you happen to know. At the time it felt like a tidy
+              communication idea. It turned out to be the thing that decided whether my technical work went
+              anywhere.</p>
+            <p>My within-the-classroom experience was where I first practiced this. For a persuasive speech,
+              I had to take a single topic and build a case designed to move a specific audience rather than
+              just inform them. It was the first time I treated persuasion as a design problem: who is
+              listening, what do they already believe, and what will actually change their mind. The idea
+              was basic compared to what came later, but it planted the habit of starting from the audience
+              instead of from the information.</p>
+            <p>That habit got tested for real at the AIChE Annual Student Conference, my beyond-the-classroom
+              experience, where I represented two environmental projects in the same week and had to pitch
+              them to opposite audiences. On the Vitamin Cube team I helped research a Solid Direct Air
+              Capture additive, pyrolyzed mandarin peels treated with KOH that captured 6 wt.% CO2, and then
+              pitched the process and its business case to a panel of judges acting as investors. For the
+              ChemE Car project we had reverse engineered how a hydrogen fuel cell could power a car motor,
+              and I presented that design to a panel of practicing engineers. The carbon-capture judges
+              wanted to know if the idea could scale and pay for itself. The fuel-cell judges wanted to know
+              if the engineering was sound. Same week, same person, two almost opposite conversations, and
+              the audience analysis I had first practiced in a classroom speech was suddenly the whole game.</p>
+            <p>Connecting the two, the through-line is that persuasion is not separate from engineering, it
+              is what makes engineering matter. A carbon-capture additive and a hydrogen-powered motor are
+              only as good as someone's willingness to fund or trust them, and that willingness lives
+              entirely in how you frame the work for the person in front of you. The most useful part of
+              this for my future field is realizing that the climate problems I want to work on are full of
+              technically sound ideas that never get adopted, and a major reason is that engineers are
+              trained to prove things are correct, not to make people care about them.</p>
+            <p>That realization changed how I see my own role. I used to think of communication as something
+              you do after the real work is finished. Now I treat it as part of the engineering itself, and
+              I have decided I want to be genuinely good at both halves rather than just the technical one.
+              Going forward, that means I build the audience into a project from the start: before I present
+              a design or a proposal, I ask who has to say yes and what they actually care about, and I
+              shape the case around that instead of leading with the derivation. This connects directly to
+              my Professional and Civic Engagement pathway, which is fundamentally about translating
+              technical expertise into something that serves and persuades real communities. A solution
+              nobody buys into does not reduce any emissions, and I want to spend my career making sure the
+              good ideas are the ones that actually get adopted.</p>
+
+            <div class="artifact-block">
+              <h4 class="artifact-heading">Artifacts</h4>
+              <div class="artifact">
+                <span class="artifact-tag wtc">Within the classroom</span>
+                <p><a href="files/SPCH140_Persuasive_Speech.pdf" target="_blank" rel="noopener">Persuasive speech slides, SPCH 140</a>.
+                  The presentation deck from an early persuasive speech, built to move a specific audience
+                  toward a position rather than just inform them. It is where I first practiced audience
+                  analysis as a deliberate design step, the same skill I later leaned on to pitch two very
+                  different technical projects in one week.</p>
+              </div>
+              <div class="artifact">
+                <span class="artifact-tag btc">Beyond the classroom</span>
+                <p><a href="files/VitaminCube_Pitch_Deck.pdf" target="_blank" rel="noopener">Vitamin Cube investor pitch deck</a>.
+                  The deck my team used at the AIChE Annual Student Conference to pitch the Solid Direct Air
+                  Capture additive and its business case. It is audience analysis under pressure made
+                  visible: the same carbon-capture science, framed around market size, cost per ton, revenue
+                  streams, and the investment ask, everything an investor panel needed to hear. That framing
+                  carried the project to 2nd place internationally.</p>
+              </div>
+            </div>
           </div>
           </div>
 
